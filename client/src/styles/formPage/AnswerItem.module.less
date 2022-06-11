@@ -1,0 +1,47 @@
+@import '../mixins.less';
+
+@padding: 5px 0px;
+
+.answerText(@borderColor: #fff, @backgroundColor: #ecf7fc) {
+  padding: 10px;
+  border: thick double @borderColor;
+  margin-left: 5px;
+  background-color: @backgroundColor;
+}
+
+.answerItemEdit {
+  padding: @padding;
+  .flex();
+
+  .marker {
+    width: 32px;
+    height: 32px;
+    padding: 4px 15px;
+    border: 1px solid #156285;
+    border-radius: 2px;
+    margin-right: 10px;
+    font-size: 14px;
+    background-color: #ecf7fc;
+    .flex();
+  }
+
+  .btnDelete {
+    margin-left: 10px;
+  }
+}
+
+.answerItemPlay {
+  padding: @padding;
+
+  .checkboxItem {
+    padding: 10px;
+    .flex(@justify: flex-start);
+
+    .answerTextDefault {
+      .answerText();
+    }
+    .answerTextChecked {
+      .answerText(@borderColor: #135873, @backgroundColor: #cae9f6);
+    }
+  }
+}

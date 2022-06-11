@@ -1,0 +1,63 @@
+@import '../landing/Landing.module.less';
+
+.logo {
+  .section(@background1, @flexDirection: row);
+  
+  .img {
+    width: 256px;
+    height: 256px;
+  }
+
+  .info {
+    position: relative;
+
+    .title {
+      font-size: 10rem;
+    }
+
+    .description {
+      position: absolute;
+      bottom: 0px;
+      right: 14px;
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 901px) {
+    .img {
+      width: 128px;
+      height: 128px;
+    }
+    .info {  
+      .title {
+        font-size: 5rem;
+      }
+  
+      .description {
+        position: absolute;
+        bottom: 20px;
+        right: 8px;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  @media (max-width: 401px) {
+    .img {
+      width: 80px;
+      height: 80px;
+    }
+    .info {  
+      .title {
+        font-size: 4rem;
+      }
+  
+      .description {
+        position: absolute;
+        bottom: 15px;
+        right: 5px;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

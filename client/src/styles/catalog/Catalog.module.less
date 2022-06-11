@@ -1,0 +1,29 @@
+@import '../mixins.less';
+
+@borderButtons: 3px solid #003d77;
+
+.catalog {
+  padding: 20px 10px;
+  background-color: #e8e4f4;
+  .flex(@direction: column);
+  
+  .buttons {
+    padding: 10px 20px;
+    border-top: @borderButtons;
+    border-bottom: @borderButtons;
+    .flex();
+
+    .search {
+      margin-left: 20px;
+      z-index: 0;
+    }
+  }
+
+  .items {
+    width: 100%;
+    padding-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(336px, max-content));
+    justify-content: center;
+  } 
+}

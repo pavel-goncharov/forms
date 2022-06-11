@@ -1,0 +1,72 @@
+@import '../mixins.less';
+
+@blue: #001529;
+@white: #fff;
+@purple: #5d44a9;
+@border: 3px solid @blue;
+
+.item {
+  width: 300px;
+  height: 211px;
+  margin: 15px;
+  border-radius: 10px 10px 0 0;
+  background-color: @white;
+
+  .head {
+    height: 60px;
+    width: 300px;
+    padding-left: 20px;
+    border: @border;
+    border-radius: 10px 10px 0 0;
+    font-size: 1.2rem;
+    display: table-cell;
+    background-color: @purple;
+    color: @white;
+    vertical-align: middle;
+  }
+
+  .body {
+    height: 151px;
+    
+    .info {
+      height: 101px;
+      padding: 10px 20px;
+      border-left: @border;
+      border-right: @border;
+      p {
+        margin: 0 0 5px;
+      }
+    }
+    
+    .actions {
+      height: 50px;
+      border: @border;
+      .flex();
+
+      .action {
+        width: 25%;
+        height: 60%;
+        color: @blue;
+
+        .flex();
+        
+        &:not(:last-child) {
+          border-right: 2px solid @blue;
+        }
+
+        &:hover:not(:last-child) {
+          color: @purple;
+        }
+
+        &:hover:last-child {
+          color: #f00;
+        }
+
+        svg {
+          width: 1.5em;
+          height: 1.5em;
+        }
+      }
+    }
+  }
+}

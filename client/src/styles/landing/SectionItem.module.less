@@ -1,0 +1,90 @@
+@import '../mixins.less';
+
+@fontSize: 2rem;
+
+.item {
+  padding: 20px 50px;
+  
+  @media (max-width: 1131px) {
+    padding: 20px;
+  }
+  @media (max-width: 401px) {
+    padding: 5px;
+  }
+
+  .flex(@direction: column);
+
+  .img {
+    width: 256px;
+    height: 256px;
+    padding-bottom: 20px;
+
+    @media(max-width: 1131px) {
+      padding-bottom: 10px;
+      width: 224px;
+      height: 224px;
+    }
+
+    @media(max-width: 901px) {
+      width: 128px;
+      height: 128px;
+    }
+
+    @media(max-width: 524px) {
+      width: 112px;
+      height: 112px;
+    }
+
+    @media(max-width: 476px) {
+      width: 96px;
+      height: 96px;
+    }
+
+    @media(max-width: 428px) {
+      width: 72px;
+      height: 72px;
+    }
+
+    @media(max-width: 401px) {
+      width: 128px;
+      height: 128px;
+      padding-bottom: 5px;
+    }
+  }
+
+  .caption {
+    font-size: @fontSize;
+
+    @media(max-width: 901px) {
+      font-size: 1rem;
+    }
+
+    @media(max-width: 401px) {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.listItem {
+  width: 500px;
+  padding: 10px;
+  margin: 30px 0;
+  font-size: @fontSize;
+  text-align: center;
+  background-color: #fffeb2;
+  
+  @media(max-width: 901px) {
+    font-size: 1.1rem;
+    width: 300px;
+  }
+
+  @media(max-width: 601px) {
+    font-size: 1.1rem;
+    width: 250px;
+  }
+
+  @media(max-width: 400px) {
+    font-size: 1.1rem;
+    width: 220px;
+  }
+}

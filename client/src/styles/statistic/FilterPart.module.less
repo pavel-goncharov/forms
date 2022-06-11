@@ -1,0 +1,23 @@
+@import '../mixins.less';
+
+.title {
+  padding: 10px 20px;
+  border-bottom: 2px solid #a190d3;
+  background-color: #5d44a9;
+  color: #fff;
+  .flex(@justify: space-between);
+  .text{
+    padding-left: 5px;
+  }
+}
+.switches {
+  button + button {
+    margin-left: 10px;
+  }
+  .switchEye {
+    svg {
+      position: relative;
+      top: 1px;
+    }
+  }
+}

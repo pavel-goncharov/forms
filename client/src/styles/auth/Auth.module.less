@@ -1,0 +1,49 @@
+@import '../mixins.less';
+
+@fontSize: 1.2rem;
+
+.auth {
+  height: calc(100vh - 60px);
+  background: linear-gradient(#003364, #5d44a9);
+  .flex();
+
+  .form {
+    width: 50vw;
+    padding: 30px;
+    border-radius: 20px;
+    background-color: #f4f2fa;
+
+    @media (max-width: 901px) {
+      width: 75vw;
+    }
+    @media (max-width: 501px) {
+      width: 85vw;
+    }
+  
+    .title {
+      font-size: 2rem;
+      padding-bottom: 10px;
+      text-align: center;
+    }
+  
+    .formItemInput {
+      margin-bottom: 5px;
+      div {
+        padding: 0 0 3px;
+
+        label {
+          font-size: @fontSize;
+        }
+      }
+    }
+  
+    .formItemBtn {
+      margin: 20px 0 0;
+      .btn {
+        font-size: @fontSize;
+        width: 100%;
+        padding: 5px 0;
+      }
+    }
+  }
+}

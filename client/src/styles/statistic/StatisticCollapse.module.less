@@ -1,0 +1,97 @@
+@import '../mixins.less';
+
+.question {
+  padding: 10px 30px 5px;
+  border-bottom: 2px dashed #2f2255;
+  background-color: #ecf7fc;
+  .questionNumber {
+    font-weight: bold;
+  }
+  .questionTitle {
+    position: relative;
+    bottom: 5px;
+  }
+}
+
+.answers {
+  width: 100vw;
+  padding: 20px 30px;
+  .answer {
+    .answerBriefly {
+      .flex(@justify: flex-start);
+      .marker {
+        width: 40px;
+        height: 40px;
+        padding: 4px 15px;
+        border: 1px solid #156285;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        background-color: #ecf7fc;
+        .flex();
+      }
+      
+      .answerBody {
+        width: calc(100% - 40px);
+        margin-left: 10px;
+        .text {
+          width: calc(100% - 110px);
+          position: relative;
+          top: 4px;
+          font-size: 1.2rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .progress {
+          position: relative;
+          bottom: 4px;
+        }
+      }  
+    }
+    .buttons {
+      .flex(@justify: flex-start, @wrap: wrap);
+      width: calc(100% - 110px);
+      margin-left: 50px;
+      padding-bottom: 5px;
+      .button {
+        padding: 10px;
+        border-radius: 10px;
+        .flex();
+      }
+      button + button {
+        margin-left: 10px;
+      } 
+      @media (max-width: 440px) {
+        .flex(@direction: column, @align: flex-start);
+        button + button {
+          margin-left: 0;
+          margin-top: 10px;
+        } 
+      }
+    }
+    .answerComplete {
+      width: calc(100% - 110px);
+      padding: 10px;
+      margin-left: 50px;
+      border: thick double #fff;
+      border-radius: 5px;
+      background-color: #ecf7fc;
+    }
+    .users {
+      width: calc(100% - 110px);
+      padding: 5px 2px;
+      margin-left: 50px;
+      .flex(@justify: flex-start, @wrap: wrap);
+      .user {
+        .flex(@justify: flex-start);
+        .avatar {
+          margin-right: 3px;
+          background-color: #7265e6;         
+        }
+      }
+      .user:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+  }
+}

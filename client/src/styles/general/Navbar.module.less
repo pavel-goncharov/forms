@@ -1,0 +1,113 @@
+@import '../mixins.less';
+
+@color: #fff;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 60px;
+  padding: 5px 20px;
+  font-size: 1.2rem;
+  .flex(@justify: space-between);
+
+  & + main {
+    margin-top: 60px;
+  }
+
+  .navlink {
+    height: 60px;
+    padding: 0px 20px;
+    color: @color;
+    .flex();
+  
+    &:hover {
+      background-color: #002950;
+      color: aqua;
+    }
+  
+    &:active, &Active {
+      background-color: #003d77;
+      color: #ebffff;
+    }
+  
+    .logo { 
+      width: 40px;
+      height: 40px;
+    }
+  
+    .title {
+      margin-left: 5px;
+      font-size: 2.7rem;
+    }
+  }
+
+  .pages {
+    .flex();
+  }
+
+  .userScope {
+    .flex();
+  
+    .avatar {
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      background-color: #7265e6;
+      .flex();
+    }
+  
+    .nickname {
+      padding: 0px 10px;
+      color: @color;
+    }  
+  }
+
+  @media (max-width: 951px) {
+    padding: 5px 10px;
+    .navlink {
+      padding: 0px 10px
+    }
+  }
+
+  @media (max-width: 601px) {
+    padding: 5px;
+    font-size: 1rem;
+    .navlink {
+      padding: 0px 5px;
+      .logo { 
+        width: 32px;
+        height: 32px;
+      }
+      .title {
+        font-size: 2rem;
+      }
+    }
+    .userScope {    
+      .avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+      }
+      .nickname {
+        padding: 0px 5px;
+      }  
+    }
+  }
+
+  @media(max-width: 401px) {
+    .navlink {
+      .title {
+        display: none;
+      }
+    }
+    .userScope {    
+      .nickname {
+        display: none;
+      }  
+    }
+  }
+}

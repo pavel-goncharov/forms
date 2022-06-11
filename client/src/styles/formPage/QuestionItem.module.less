@@ -1,0 +1,31 @@
+.questionItemEdit {
+  .questionItem(
+    @paddingTextContainer: 10px 20px,
+    @paddingAnswers: 20px 20px 20px 30px,
+  );
+}
+
+.questionItemPlay {
+  .questionItem(
+    @paddingTextContainer: 20px 30px,
+    @paddingAnswers: 10px 0 20px 10px,
+  );
+}
+
+.questionItem(@paddingTextContainer, @paddingAnswers) {
+  margin: 40px 30px;
+  
+  .textContainer {
+    padding: @paddingTextContainer;
+    border-bottom: 2px dashed #2f2255;
+    background-color: #ecf7fc;
+  }
+
+  .answers {
+    padding: @paddingAnswers;
+
+    & > button {
+      margin-top: 10px;
+    }    
+  }
+}

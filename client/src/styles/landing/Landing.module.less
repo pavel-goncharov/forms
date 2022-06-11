@@ -1,0 +1,39 @@
+@import '../mixins.less';
+
+@background1: #b2daff;
+@background2: #edf6ff;
+
+.section(@background, @flexDirection: column, @flexWrapItems: wrap, @paddingY: 60px) {
+  padding: @paddingY 30px;
+  background-color: @background;
+  .flex(@direction: @flexDirection);
+
+  @media (max-width: 1131px) {
+    padding: 20px 10px;
+  }
+
+  .title {
+    font-size: 3rem;
+    padding-bottom: 20px;
+
+    @media (max-width: 901px) {
+      font-size: 1.5rem;
+      padding-bottom: 10px;
+    }
+  }
+
+  .subtitle {
+    font-size: 2.5rem;
+    
+    @media (max-width: 901px) {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .items {
+    .flex(@wrap: @flexWrapItems);
+    @media(max-width: 401px) {
+      .flex(@direction: column);
+    }
+  }
+}

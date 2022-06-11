@@ -1,0 +1,44 @@
+@import '../mixins.less';
+
+.users {
+  background-color: #ecf7fc;
+  .user {
+    label {
+      padding: 10px 15px;
+      .flex(@justify: flex-start);
+    }
+    &:not(:last-child) {
+      border-bottom: 2px dashed #2f2255;
+    }
+    &:last-child {
+      border-bottom: 2px dashed transparent;
+    }
+    &:hover {
+      background-color: #dbf0f9;
+    }
+    .active {
+      background-color: #97d3ef;
+    }
+    .checkbox {
+      padding: 5px 15px;
+      font-size: 1.25rem;
+      .content {
+        position: relative;
+        bottom: 1px;
+        .flex(@justify: flex-start);
+        .number {
+          svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
+        .avatar {
+          background-color: #7265e6;
+          margin: 0 4px 0 3px;
+          position: relative;
+          top: 1px;         
+        }
+      }
+    }
+  }
+}
