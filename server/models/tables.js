@@ -1,53 +1,79 @@
 import sequelize from '../database/config.js';
 import {DataTypes} from 'sequelize';
 
-const User = sequelize.define('user', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-  nickname: {type: DataTypes.STRING, unique: true, allowNull: false},
-  email: {type: DataTypes.STRING, unique: true, allowNull: false},
-  password: {type: DataTypes.STRING, allowNull: false}
+const tableNames = {
+  user: 'user',
+  form: 'form',
+  question: 'question',
+  answer: 'answer',
+  passageForm: 'passage_form',
+  passageQuestion: 'passage_question',
+  passageAnswer: 'passage_answer'
+};
+
+const idField = {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true};
+const uniqueField = {type: DataTypes.STRING, unique: true, allowNull: false};
+const notAllowNullField = {type: DataTypes.STRING, allowNull: false};
+const defaultField = {type: DataTypes.STRING};
+
+const User = sequelize.define(tableNames.user, {
+  id: {...idField},
+  nickname: {...uniqueField},
+  email: {...uniqueField},
+  password: {...notAllowNullField}
 });
 
-const Form = sequelize.define('form', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-  title: {type: DataTypes.STRING, allowNull: false},
-  description: {type: DataTypes.STRING}
+const Form = sequelize.define(tableNames.form, {
+  id: {...idField},
+  title: {...notAllowNullField},
+  description: {...defaultField}
 });
 
-const Question = sequelize.define('question', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-  title: {type: DataTypes.STRING, allowNull: false},
+const Question = sequelize.define(tableNames.question, {
+  id: {...idField},
+  title: {...notAllowNullField},
 });
 
-const Answer = sequelize.define('answer', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-  title: {type: DataTypes.STRING, allowNull: false},
-  isSelected: {type: DataTypes.BOOLEAN, allowNull: false}
+const Answer = sequelize.define(tableNames.answer, {
+  id: {...idField},
+  title: {...notAllowNullField},
 });
 
-const Result = sequelize.define('result', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}
+const PassageForm = sequelize.define(tableNames.passageForm, {
+  id: {...idField}
 });
 
-User.hasMany(Form);
-Form.belongsTo(User);
+const PassageQuestion = sequelize.define(tableNames.passageQuestion, {
+  id: {...idField}
+});
 
-Form.hasMany(Question);
-Question.belongsTo(Form);
+const PassageAnswer = sequelize.define(tableNames.passageAnswer, {
+  id: {...idField}
+});
 
-Question.hasMany(Answer);
-Answer.belongsTo(Question);
+const tableRelationships = [
+  {one: User, many: Form},
+  {one: Form, many: Question},
+  {one: Question, many: Answer},
+  {one: Question, many: PassageQuestion},
+  {one: Answer, many: PassageAnswer},
+  {one: User, many: PassageForm},
+  {one: Form, many: PassageForm},
+  {one: PassageForm, many: PassageQuestion},
+  {one: PassageQuestion, many: PassageAnswer}
+];
 
-User.hasMany(Result);
-Result.belongsTo(User);
-
-Form.hasMany(Result);
-Result.belongsTo(Form);
+for(const table of tableRelationships) {
+  (table.one).hasMany(table.many);
+  (table.many).belongsTo(table.one);
+}
 
 export {
   User,
   Form,
   Question,
   Answer,
-  Result
+  PassageForm,
+  PassageQuestion,
+  PassageAnswer
 }

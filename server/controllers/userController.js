@@ -3,7 +3,7 @@ import ApiError from '../error/ApiError.js';
 import {User} from '../models/tables.js';
 import generateJwt from '../utils/generateJwt.js';
 
-class userController {
+class UserController {
   
   async signUp(req, res, next) {
     const {nickname, email, password} = req.body;
@@ -43,6 +43,12 @@ class userController {
     const token = generateJwt(user.id, user.nickname, user.email);
     return res.json({token});
   }
+
+  async getNickname(req, res) {
+    const {id} = req.body;
+    const nicknameAuthor = await User.findByPk(id).then(user => user.nickname);
+    return res.json(nicknameAuthor);
+  }
 }
 
-export default new userController(); 
+export default new UserController(); 

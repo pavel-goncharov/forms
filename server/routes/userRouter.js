@@ -1,10 +1,10 @@
 import Router from 'express';
-import userController from '../controllers/userController.js';
+import UserController from '../controllers/userController.js';
 
-const router = new Router();
+const userRouter = new Router();
 
-// router.get('/user1', (req, res) => res.json({name: 'works'}));
-router.post('/signup', userController.signUp);
-router.post('/login', userController.login);
+userRouter.post('/signup', UserController.signUp);
+userRouter.post('/login', UserController.login);
+userRouter.get('/nickname', UserController.getNickname);
 
-export default router;
+export default userRouter;
