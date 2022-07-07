@@ -1,4 +1,18 @@
-import { Paths } from "../routes";
+export interface ISignUp {
+  success: string;
+}
+export interface ILogin {
+  token: string;
+}
+
+export interface ILoginParams {
+  email: string;
+  password: string;
+}
+
+export interface ISignUpParams extends ILoginParams {
+  nickname: string;
+}
 
 export interface IAuthMode {
   title: string;
@@ -7,6 +21,13 @@ export interface IAuthMode {
     title: string;
     titlePath: string;
     path: string;
-    // path: Paths.LOGIN | Paths.SIGN_UP;
   };
+}
+
+export interface IJwtDecode {
+  id: number;
+  nickname: string;
+  email: string;
+  exp: number;
+  iat: number;
 }

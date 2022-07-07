@@ -3,7 +3,13 @@ import {Form, Question, User} from '../models/tables.js';
 class CatalogController {
   async createForm(req, res) {
     const {title, description, userId} = req.body;
-    const newForm = await Form.create({title, description, userId});
+    const newFormDb = await Form.create({title, description, userId});
+    const newForm = {
+      id: newFormDb.id,
+      title: newFormDb.title,
+      description: newFormDb.description,
+      userId: newFormDb.userId
+    }
     return res.json(newForm);
   }
 

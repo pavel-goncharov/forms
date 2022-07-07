@@ -1,34 +1,36 @@
 import {FC} from 'react';
 import {EditOutlined, PlayCircleOutlined, BarChartOutlined, DeleteOutlined} from '@ant-design/icons';
-import {useNavigate} from 'react-router-dom';
-import {IFormItem} from '../../models/form';
+import {ICatalogItem} from '../../models/form';
 import {Paths} from '../../routes';
 import classes from '../../styles/catalog/CatalogItem.module.less';
+import { message, Popconfirm } from 'antd';
+import { useGoToItemPage } from '../../hooks/useGoToItemPage';
 
 interface CatalogItemProps {
-  form: IFormItem
+  form: ICatalogItem,
+  remove: (id: number) => any
 }
 
-const CatalogItem: FC<CatalogItemProps> = ({form}) => {
-  const navigate = useNavigate();
+const CatalogItem: FC<CatalogItemProps> = ({form, remove}) => {
+  const navigate = useGoToItemPage();
 
   function toPlay() {
-    // finish id
-    navigate(Paths.PLAY);
+    navigate.goTo(Paths.PLAY, form.id);
   }
 
   function toEdit() {
-    // finish id
-    navigate(Paths.EDIT);
+    navigate.goTo(Paths.EDIT, form.id);
   }
 
   function toStatistic() {
-    // finish id
-    navigate(Paths.STATISTIC);
+    navigate.goTo(Paths.STATISTIC, form.id);
   }
 
-  function removeForm() {
-    
+  async function removeForm() {
+    const res = await remove(form.id);
+    if (!("data" in res)) return;
+    const feedback = res.data;
+    message.success(feedback);
   }
   
   return (
@@ -36,22 +38,29 @@ const CatalogItem: FC<CatalogItemProps> = ({form}) => {
       <div className={classes.head}>{form.title}</div>
       <div className={classes.body}>
         <div className={classes.info}>
-          <p>Description: {form.description}</p>
-          <p>Questions: {form.questionCount}</p>
-          <p>Author: {form.authorNickname}</p>
+          <p>Description: {form.description || form.title}</p>
+          <p>Questions: {form.questions}</p>
+          <p>Author: {form.author}</p>
         </div>
         <ul className={classes.actions}>
-          <li className={classes.action}>
-            <PlayCircleOutlined onClick={toPlay} key="play"/>
+          <li onClick={toPlay} className={classes.action}>
+            <PlayCircleOutlined key="play"/>
+          </li>
+          <li onClick={toEdit} className={classes.action}>
+            <EditOutlined key="edit"/>
+          </li>
+          <li onClick={toStatistic} className={classes.action}>
+            <BarChartOutlined key="statistic"/>
           </li>
           <li className={classes.action}>
-            <EditOutlined onClick={toEdit} key="edit"/>
-          </li>
-          <li className={classes.action}>
-            <BarChartOutlined onClick={toStatistic} key="statistic"/>
-          </li>
-          <li className={classes.action}>
-            <DeleteOutlined onClick={removeForm} key="delete"/>
+            <Popconfirm
+              title={`Are you sure to delete the ${form.title}?`}
+              onConfirm={removeForm}
+              okText="Yes"
+              cancelText="No"
+            >
+              <DeleteOutlined key="delete"/>
+            </Popconfirm>
           </li>          
         </ul>
       </div>

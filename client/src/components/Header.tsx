@@ -1,16 +1,33 @@
-import {Button, PageHeader, Tag} from 'antd';
-import {FC, ReactElement, ReactNode, useState} from 'react';
+import {Button, message, PageHeader, Popconfirm, Tag} from 'antd';
+import {FC, useState} from 'react';
 import classes from '../styles/general/Header.module.less';
-import {PlusSquareOutlined, InfoCircleOutlined, SaveOutlined, PlayCircleOutlined, DeleteOutlined, SendOutlined, EditOutlined, UserOutlined, BarChartOutlined} from '@ant-design/icons';
+import {InfoCircleOutlined, SaveOutlined, PlayCircleOutlined, SendOutlined, EditOutlined, UserOutlined, BarChartOutlined} from '@ant-design/icons';
 import ModalInfo from './formPage/ModalInfo';
-import { IModalInfo } from '../models/form';
+import { IModalInfo, ITagsAndExtra } from '../models/form';
+import { HeaderModes, KeyOfButtons } from '../utils/constants';
+import { useGoToItemPage } from '../hooks/useGoToItemPage';
 import { Paths } from '../routes';
-import { useLocation } from 'react-router-dom';
-import { initTitleForm } from '../utils/initData';
+import { useNavigate } from 'react-router-dom';
+import formApi from '../api/extended/formApi';
+import { useAppSelector } from '../hooks/useAppSelector';
+import editApi from '../api/extended/editApi';
+import statisticApi from '../api/extended/statisticApi';
 
+interface HeaderProps {
+  mode: HeaderModes,
+  formId: number,
+  sendPassage?: () => void;
+}
 
-const FormPageHeader: FC = () => {
-  const location = useLocation();
+const Header: FC<HeaderProps> = ({mode, formId, sendPassage}) => {
+  const {data: titleForm} = formApi.useFetchTitleQuery(formId);
+  const [saveTheChanges] = editApi.useSaveTheChangesMutation();
+  const {data: numberPassages} = statisticApi.useFetchPassagesQuery(formId);
+
+  const questionsEdit = useAppSelector(state => state.edit.questions); 
+
+  const navigate = useNavigate();
+  const navigateItem = useGoToItemPage();
 
   const [modalInfoVisible, setModalInfoVisible] = useState<boolean>(false);
 
@@ -19,58 +36,93 @@ const FormPageHeader: FC = () => {
     setVisible: setModalInfoVisible
   };
 
-  const tags = getTags(location.pathname);
-  const extra = getExtra(location.pathname);
+  const tagsAndExtra = getTagsAndExtra(mode);
 
-  function getTags(path: string): ReactElement[] {
-    switch(path) {
-      case Paths.EDIT:
-        return [
-          <Tag key='play'><PlayCircleOutlined/></Tag>,
-          <Tag key='statistic'><BarChartOutlined/></Tag>
-        ];
-      case Paths.PLAY:
-        return [
-          <Tag key='edit'><EditOutlined/></Tag>,
-          <Tag key='statistic'><BarChartOutlined/></Tag>
-        ];
-      case Paths.STATISTIC:
-        return [
-          <Tag key='play'><PlayCircleOutlined/></Tag>,
-          <Tag key='edit'><EditOutlined/></Tag>
-        ];
-      default:
-        return [];  
+  function getTagsAndExtra(mode: HeaderModes): ITagsAndExtra {
+    switch(mode) {
+      case HeaderModes.EDIT: 
+        return ({
+          tags: [
+            <Tag onClick={toPlay} key={HeaderModes.PLAY}><PlayCircleOutlined/></Tag>,
+            <Tag onClick={toStatistic} key={HeaderModes.STATISTIC}><BarChartOutlined/></Tag>
+          ],
+          extra: [
+            <Button onClick={() => setModalInfoVisible(true)} key={KeyOfButtons.INFO}><InfoCircleOutlined/></Button>,
+            <Button onClick={saveEditQuestions} key={KeyOfButtons.SAVE}><SaveOutlined/></Button>,
+          ]
+        });
+      case HeaderModes.PLAY: 
+        return ({
+          tags: [
+            <Tag onClick={toEdit} key={HeaderModes.EDIT}><EditOutlined/></Tag>,
+            <Tag onClick={toStatistic} key={HeaderModes.STATISTIC}><BarChartOutlined/></Tag>
+          ],
+          extra: [
+            <Popconfirm
+              key={KeyOfButtons.SEND}
+              placement="bottomRight"
+              title="Are you sure to send your passage?"
+              onConfirm={sendPassage!}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button>
+                <SendOutlined/>
+              </Button>
+            </Popconfirm>
+          ]
+        });
+      case HeaderModes.STATISTIC: 
+        return ({
+          tags: [
+            <Tag onClick={toPlay} key={HeaderModes.PLAY}><PlayCircleOutlined/></Tag>,
+            <Tag onClick={toEdit} key={HeaderModes.EDIT}><EditOutlined/></Tag>
+          ],
+          extra: [
+            <Button key={KeyOfButtons.USERS}><UserOutlined/>{numberPassages}</Button>
+          ]
+        });
     }
   }
 
-  function getExtra(path: string): ReactNode[] {
-    switch(path) {
-      case Paths.EDIT:
-        return [
-          <Button key='info' onClick={() => setModalInfoVisible(true)}><InfoCircleOutlined/></Button>,
-          <Button key='save'><SaveOutlined/></Button>,
-        ];
-      case Paths.PLAY:
-        return [
-          <Button key='send'><SendOutlined/></Button>
-        ];
-      case Paths.STATISTIC:
-        return [
-          <Button key='users'><UserOutlined/>10</Button>
-        ];
-      default:
-        return [];
-    }
+  async function saveEditQuestions() {
+    const editQuestions = questionsEdit.map(question => ({
+      id: question.id,
+      title: question.title,
+      answers: question.answers.map(answer => ({
+        id: answer.id,
+        title: answer.title
+      }))
+    }));
+    const argEndpoint = {
+      formId,
+      editQuestions
+    };
+    const res = await saveTheChanges(argEndpoint);
+    if (!("data" in res)) return;
+    const messageText = res.data;
+    message.success(messageText);
+  }
+
+  function toPlay() {
+    navigateItem.goTo(Paths.PLAY, formId);
+  }
+
+  function toEdit() {
+    navigateItem.goTo(Paths.EDIT, formId);
+  }
+
+  function toStatistic() {
+    navigateItem.goTo(Paths.STATISTIC, formId);
   }
 
   return (
     <>
       <PageHeader
-        onBack={() => window.history.back()}
-        tags = {tags}
-        title={initTitleForm}
-        extra={extra}
+        onBack={() => navigate(Paths.CATALOG)}
+        tags = {tagsAndExtra.tags}
+        title={titleForm}
+        extra={tagsAndExtra.extra}
         className={classes.pageHeader}
       />
       <ModalInfo modal={modal}/>
@@ -78,4 +130,4 @@ const FormPageHeader: FC = () => {
   );
 };
 
-export default FormPageHeader;
+export default Header;

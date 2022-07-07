@@ -16,6 +16,7 @@ class FormController {
         const answerItem = {
           id: answer.id,
           title: answer.title,
+          isChecked: false
         };
         questionItem.answers.push(answerItem);
       }
@@ -29,9 +30,7 @@ class FormController {
     const formTitle = await Form.findByPk(id).then(form => form.title);
     return res.json(formTitle);
   }
-  // async updateTitleForm(req, res) {}
-  // async updateDescriptionForm(req, res) {}
-
+  
   async getAuthor(req, res) {
     const id = req.params.id;
     const idAuthor = await Form.findOne({where: {userId: id}}).then(form => form.userId);
@@ -40,7 +39,7 @@ class FormController {
   }
   
   async deleteForm(req, res) {
-    const {id} = req.body;
+    const id = req.params.id;
     const formTitle = await Form.findByPk(id).then(form => form.title);
     await Form.destroy({where: {id: id}});
     const message = `Form ${formTitle} deleted`;

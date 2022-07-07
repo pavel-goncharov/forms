@@ -1,0 +1,22 @@
+@import '../mixins.less';
+
+.question {
+  padding: 5px 30px 0px;
+  border-bottom: 3px dashed #2f2255;
+  background-color: #ecf7fc;
+  &:not(:first-child) {
+    border-top: 5px solid #2f2255;
+  }
+  .questionNumber {
+    font-weight: bold;
+  }
+  .questionTitle {
+    position: relative;
+    bottom: 5px;
+  }
+}
+
+.answers {
+  width: 100vw;
+  padding: 20px 30px;
+}

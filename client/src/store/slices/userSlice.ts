@@ -1,21 +1,28 @@
+import {IUser} from "../../models/user";
 import {createSlice} from "@reduxjs/toolkit";
+import {SliceNames} from "../../utils/constants";
 
 interface UserState {
   isAuth: boolean;
+  user: IUser | null;
 }
 
 const initialState: UserState = {
-  isAuth: true
+  isAuth: false,
+  user: null
 };
 
-export const userSlice = createSlice({
-  name: 'user',
+const userSlice = createSlice({
+  name: SliceNames.USER,
   initialState,
   reducers: {
     setAuth(state, action) {
       state.isAuth = action.payload; 
+    },
+    setUser(state, action) {
+      state.user = action.payload;
     }
-  } 
+  }, 
 });
 
-export default userSlice.reducer;
+export default userSlice;

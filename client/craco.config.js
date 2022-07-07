@@ -7,9 +7,7 @@ module.exports = {
       options: {
         lessLoaderOptions: {
           lessOptions: {
-            modifyVars: { 
-              // '@margin-xs': '30px' 
-            },
+            modifyVars: {},
             javascriptEnabled: true,
           },
         },

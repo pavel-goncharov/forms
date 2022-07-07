@@ -1,18 +1,18 @@
-import {IAnswer, IFormItem, IQuestion} from "../models/form";
+import {IAnswer, ICatalogItem, IQuestion} from "../models/form";
 
 export const initNickname: string = 'pawell';
 
-export const initForms: IFormItem[] = [
-  {id: 1, title: 'Form1', description: 'description1', questionCount: 11, authorNickname: 'user1'},
-  {id: 2, title: 'Form2', description: 'description2', questionCount: 12, authorNickname: 'user2'},
-  {id: 3, title: 'Form3', description: 'description3', questionCount: 13, authorNickname: 'user3'},
-  {id: 4, title: 'Form4', description: 'description4', questionCount: 14, authorNickname: 'user4'},
-  {id: 5, title: 'Form5', description: 'description5', questionCount: 15, authorNickname: 'user5'},
-  {id: 6, title: 'Form6', description: 'description6', questionCount: 16, authorNickname: 'user6'},
-  {id: 7, title: 'Form7', description: 'description7', questionCount: 17, authorNickname: 'user7'},
-  {id: 8, title: 'Form8', description: 'description8', questionCount: 18, authorNickname: 'user8'},
-  {id: 9, title: 'Form9', description: 'description9', questionCount: 19, authorNickname: 'user9'},
-  {id: 10, title: 'Form10', description: 'description10', questionCount: 20, authorNickname: 'user10'},
+export const initForms: ICatalogItem[] = [
+  {id: 1, title: 'Form1', description: 'description1', questions: 11, author: 'user1'},
+  {id: 2, title: 'Form2', description: 'description2', questions: 12, author: 'user2'},
+  {id: 3, title: 'Form3', description: 'description3', questions: 13, author: 'user3'},
+  {id: 4, title: 'Form4', description: 'description4', questions: 14, author: 'user4'},
+  {id: 5, title: 'Form5', description: 'description5', questions: 15, author: 'user5'},
+  {id: 6, title: 'Form6', description: 'description6', questions: 16, author: 'user6'},
+  {id: 7, title: 'Form7', description: 'description7', questions: 17, author: 'user7'},
+  {id: 8, title: 'Form8', description: 'description8', questions: 18, author: 'user8'},
+  {id: 9, title: 'Form9', description: 'description9', questions: 19, author: 'user9'},
+  {id: 10, title: 'Form10', description: 'description10', questions: 20, author: 'user10'},
 ];
 
 export const initQuestions: IQuestion[] = [

@@ -1,43 +1,84 @@
 import {FC, useState} from 'react';
-import {Button, Checkbox} from 'antd';
-import {IAnswer} from '../../models/form';
+import {Button, Checkbox, Popconfirm} from 'antd';
+import {IAnswerFormPage} from '../../models/form';
 import classes from '../../styles/formPage/AnswerItem.module.less';
 import {DeleteOutlined} from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
+import { useActions } from '../../hooks/useActions';
 
 interface AnswerItemProps {
-  answer: IAnswer;
+  questionId: number;
+  answer: IAnswerFormPage;
+  remove: (id: number) => void;
   isEditMode: boolean;
   index: number;
 }
 
-const AnswerItem: FC<AnswerItemProps> = ({answer, isEditMode, index}) => {
-  const [checkedAnswer, setCheckedAnswer] = useState<boolean>(answer.isSelected);
-  const [answerText, setAnswerText] = useState<string>(answer.title);
+const AnswerItem: FC<AnswerItemProps> = ({questionId, answer, remove, isEditMode, index}) => {
+  const {setIsCheckedAnswer, deleteAnswer, updateAnswer} = useActions();
+  
+  const [isChecked, setIsChecked] = useState<boolean>(answer.isChecked!);
+  const [title, setTitle] = useState<string>(answer.title);
 
-  const classAnswerItem = isEditMode ? classes.answerItemEdit : classes.answerItemPlay;
-  const classAnswerText = checkedAnswer ? classes.answerTextChecked : classes.answerTextDefault;
+  const classItem = isEditMode ? classes.answerItemEdit : classes.answerItemPlay;
+  const classText = isChecked ? classes.answerTextChecked : classes.answerTextDefault;
+
+  function changeIsCheckedAnswer(newValue: boolean) {
+    setIsChecked(newValue);
+    const dataAnswer = {
+      questionId,
+      answerId: answer.id, 
+    };
+    setIsCheckedAnswer(dataAnswer);
+  }
+
+  function handlerRemove() {
+    const argAction = {
+      questionId,
+      id: answer.id
+    };
+    deleteAnswer(argAction);
+    remove(answer.id)
+  }
+
+  function handlerUpdate(newValue: string) {
+    setTitle(newValue);
+    const updatedAnswer = {
+      questionId,
+      id: answer.id, 
+      title: newValue
+    };
+    updateAnswer(updatedAnswer);
+  }
 
   return (
-    <li className={classAnswerItem}>
+    <li className={classItem}>
       {isEditMode ? 
         <>
           <div className={classes.marker}>{index}</div>
           <TextArea 
-            value={answerText}
-            onChange={e => setAnswerText(e.target.value)} 
+            value={title}
+            onChange={e => handlerUpdate(e.target.value)} 
             placeholder={`Answer ${index}`}
             rows={1}
           />
-          <Button className={classes.btnDelete}><DeleteOutlined/></Button>
+          <Popconfirm
+            placement="left"
+            title={`Are you sure to delete the answer ${index}?`}
+            onConfirm={handlerRemove}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button className={classes.btnDelete}><DeleteOutlined/></Button>
+          </Popconfirm>
         </>
         :
         <Checkbox
-          checked={checkedAnswer} 
-          onChange={() => setCheckedAnswer(!checkedAnswer)}
+          checked={isChecked} 
+          onChange={() => changeIsCheckedAnswer(!isChecked)}
           className={classes.checkboxItem}
         >
-          <div className={classAnswerText}>{answerText}</div>
+          <div className={classText}>{title}</div>
         </Checkbox>
       }
     </li>

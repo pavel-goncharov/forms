@@ -6,19 +6,22 @@ import classes from '../styles/general/Navbar.module.less';
 import {NavLink, useLocation} from 'react-router-dom';
 import {useAppSelector} from '../hooks/useAppSelector';
 import {useActions} from '../hooks/useActions';
-import {initNickname} from '../utils/initData';
 import {publicPages, privatePages} from '../utils/modeData/navbar';
 import {IPage} from '../models/landing';
 import {Paths} from '../routes';
+import { LocalStorage } from '../utils/constants';
 
 const Navbar: FC = () => {
   const isAuth= useAppSelector(state => state.user.isAuth);
-  const {setAuth} = useActions();
+  const nickname = useAppSelector(state => state.user.user?.nickname);
+  const {setUser, setAuth} = useActions();
 
   const location = useLocation();
 
   function logOut(): void {
-    setAuth(false);
+    setUser(null);
+    setAuth(false); 
+    localStorage.removeItem(LocalStorage.TOKEN);
   }
   
   function getActivePage(pages: IPage[], currentPath: string): IPage | null {
@@ -37,7 +40,11 @@ const Navbar: FC = () => {
   const pages = isAuth ? privatePages : publicPages;
   const activePage = getActivePage(pages, location.pathname);
 
-  const nickname = initNickname;
+  function getFirstLetter(word: string | undefined): string {
+    return word ? word[0].toUpperCase() : '?';
+  }
+
+  const letter = getFirstLetter(nickname);
  
   return (
     <Header className={classes.header}>
@@ -58,7 +65,7 @@ const Navbar: FC = () => {
       </div>
       {isAuth &&
         <div className={classes.userScope}>
-          <Avatar className={classes.avatar}>{nickname[0].toUpperCase()}</Avatar>
+          <Avatar className={classes.avatar}>{letter}</Avatar>
           <span className={classes.nickname}>{nickname}</span>
           <NavLink to={Paths.LANDING} onClick={logOut} className={classes.navlink}>Log out</NavLink>
         </div>

@@ -1,4 +1,4 @@
-import {Question, Answer, Form} from '../models/tables.js';
+import {Question, Answer, Form, User} from '../models/tables.js';
 
 function getArrayOfId(arrayOfObject) {
   return arrayOfObject.map(obj => obj.id);
@@ -54,15 +54,18 @@ async function createItems(formId, currentItems) {
   const dbQuestionIds = getArrayOfId(dbQuestions);
   for(const currentItem of currentItems) {
     if(!dbQuestionIds.includes(currentItem.id)) {
-      const newQuestionItem = await Question.create({id: currentItem.id, title: currentItem.title, formId});
+      // const newQuestionItem = await Question.create({id: currentItem.id, title: currentItem.title, formId});
+      const newQuestionItem = await Question.create({title: currentItem.title, formId});
       for(const newAnswer of currentItem.answers) {
-        await Answer.create({id: newAnswer.id, title: newAnswer.title, questionId: newQuestionItem.id});
+        // await Answer.create({id: newAnswer.id, title: newAnswer.title, questionId: newQuestionItem.id});
+        await Answer.create({title: newAnswer.title, questionId: newQuestionItem.id});
       }
     } else {
       for(const currentAnswer of currentItem.answers) {
         const answerDb = await Answer.findByPk(currentAnswer.id);
         if(answerDb === null) {
-          await Answer.create({id: currentAnswer.id, title: currentAnswer.title, questionId: currentItem.id});
+          // await Answer.create({id: currentAnswer.id, title: currentAnswer.title, questionId: currentItem.id});
+          await Answer.create({title: currentAnswer.title, questionId: currentItem.id});
         }
       }
     }
@@ -70,6 +73,19 @@ async function createItems(formId, currentItems) {
 }
 
 class EditController {
+  async getInfoForm(req, res) {
+    const id = req.params.id;
+    const form = await Form.findByPk(id);
+    const countQuestion = await Question.count({where: {formId: id}});
+    const nicknameAuthor = await User.findByPk(form.userId).then(user => user.nickname);
+    const formInfo = {
+      title: form.title,
+      description: form.description,
+      questions: countQuestion,
+      author: nicknameAuthor
+    }
+    return res.json(formInfo);
+  }
   async updateInfoForm(req, res) {
     const id = req.params.id;
     const {newTitle, newDescription} = req.body;
@@ -81,38 +97,37 @@ class EditController {
 
   async saveForm(req, res) {
     const formId = req.params.id;
-    const currentItems = req.body.currentQuestions;
+    const currentItems = req.body;
     dropOldItems(formId, currentItems);
     updateItemsTitles(formId, currentItems);
     createItems(formId, currentItems);
     return res.json('The last changes are saved');
   }
 
-  async createQuestion(req, res) {
-    const formId = req.params.id;
-    const {title} = req.body;
-    const newQuestion = await Question.create({title, formId});
-    return res.json(newQuestion);
-  } 
+  // for postman
 
-  async createAnswer(req, res) {
-    const questionId = req.params.id;
-    const {title} = req.body;
-    const newAnswer = await Answer.create({title, questionId});
-    return res.json(newAnswer);
-  }
-
-  async deleteQuestion(req, res) {
-    const id = req.params.id;
-    await Question.destroy({where: {id}});
-    return res.json('Question deleted');
-  }
-
-  async deleteAnswer(req, res) {
-    const id = req.params.id;
-    await Answer.destroy({where: {id}});
-    return res.json('Answer deleted');
-  }
+  // async createQuestion(req, res) {
+  //   const formId = req.params.id;
+  //   const {title} = req.body;
+  //   const newQuestion = await Question.create({title, formId});
+  //   return res.json(newQuestion);
+  // } 
+  // async createAnswer(req, res) {
+  //   const questionId = req.params.id;
+  //   const {title} = req.body;
+  //   const newAnswer = await Answer.create({title, questionId});
+  //   return res.json(newAnswer);
+  // }
+  // async deleteQuestion(req, res) {
+  //   const id = req.params.id;
+  //   await Question.destroy({where: {id}});
+  //   return res.json('Question deleted');
+  // }
+  // async deleteAnswer(req, res) {
+  //   const id = req.params.id;
+  //   await Answer.destroy({where: {id}});
+  //   return res.json('Answer deleted');
+  // }
 }
 
 export default new EditController();

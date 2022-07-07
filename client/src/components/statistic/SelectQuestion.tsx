@@ -1,19 +1,43 @@
-import {FC} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {Checkbox} from 'antd';
 import classes from '../../styles/statistic/SelectQuestion.module.less';
+import { IFilterQuestion } from '../../models/statistic';
+import { useActions } from '../../hooks/useActions';
 
-const SelectQuestion: FC = () => {
-  return (
-    <ul className={classes.questions}>
-      <li className={classes.question}>
-        <Checkbox className={classes.checkbox}>
-          <div className={classes.text}>
-            <div className={classes.questionNumber}>Question 0</div>
-            <div className={classes.questionTitle}>Question0Title</div>
-          </div> 
-        </Checkbox>
-      </li>
-    </ul>
+interface SelectQuestionProps {
+  question: IFilterQuestion;
+  isAll: boolean;
+  index: number;
+}
+
+const SelectQuestion: FC<SelectQuestionProps> = ({question, isAll, index}) => {
+  const {addSelectedQuestion, deleteSelectedQuestion} = useActions();
+
+  const [isSelected, setIsSelected] = useState<boolean>(isAll);
+  
+  useEffect(() => {
+    handlerIsSelected(isAll);
+  }, [isAll]);
+
+  function handlerIsSelected(newValue: boolean) {
+    setIsSelected(newValue);
+    if(newValue) addSelectedQuestion(question);
+    else deleteSelectedQuestion(question.id);
+  }
+  
+  return ( 
+    <li key={question.id} className={classes.question}>
+      <Checkbox
+        checked={isSelected}
+        onChange={() => handlerIsSelected(!isSelected)} 
+        className={classes.checkbox}
+      >
+        <div className={classes.text}>
+          <div className={classes.questionNumber}>Question {index + 1}</div>
+          <div className={classes.questionTitle}>{question.title}</div>
+        </div> 
+      </Checkbox>
+    </li>
   );
 };
 

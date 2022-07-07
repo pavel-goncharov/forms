@@ -20,7 +20,8 @@ const User = sequelize.define(tableNames.user, {
   id: {...idField},
   nickname: {...uniqueField},
   email: {...uniqueField},
-  password: {...notAllowNullField}
+  password: {...notAllowNullField},
+  refreshTokens: {type: DataTypes.ARRAY(DataTypes.STRING)}
 });
 
 const Form = sequelize.define(tableNames.form, {

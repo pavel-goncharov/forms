@@ -8,13 +8,19 @@ class StatisticController {
     return res.json(countPassage);
   }
 
-  async getFilter(req, res) {
+  async getFilterQuestions(req, res) {
     const formId = req.params.id;
     const questionsDb = await Question.findAll({where: {formId}});
     const questions = questionsDb.map(question => ({
       id: question.id,
-      title: question.title
+      title: question.title,
+      isSelected: true,
     }));
+    return res.json(questions);
+  }
+
+  async getFilterUsers(req, res) {
+    const formId = req.params.id;
     const userIds = await PassageForm.findAll({where: {formId}}).then(passages => 
       passages.map(passage => passage.userId)
     );
@@ -24,22 +30,25 @@ class StatisticController {
       const passageUser = {
         id: userId,
         nickname,
+        isSelected: true,
       };
       passageUsers.push(passageUser);
     }
-    const filter = {
-      questions,
-      users: passageUsers
-    };
-    return res.json(filter);
+    return res.json(passageUsers);
   }
 
-  async getStatistic(req, res) {
-    const id = req.params.id;
-    const questions = await Question.findAll({where: {formId: id}});
+  async calcStatistic(req, res) {
+    const formId = req.params.id;
+    const {selectedQuestions, selectedUsers} = req.body;
+
+    const filteredPassageQuestions = await getFilteredPassageQuestions(formId, selectedUsers, selectedQuestions);
+
+    const questionsDb = await Question.findAll({where: {formId}});
+    const questions = filterQuestionDb(questionsDb, selectedQuestions);
+
     const questionItems = [];
     for(const question of questions) {
-      const totalNumberAnswers = await calcTotalNumberAnswers(question.id);
+      const totalNumberOfAnswers = await calcTotalNumberOfAnswers(question.id, filteredPassageQuestions);
       const questionItem = {
         id: question.id,
         title: question.title,
@@ -47,14 +56,15 @@ class StatisticController {
       };
       const answers = await Answer.findAll({where: {questionId: question.id}});
       for(const answer of answers) {
-        const statisticOfAnswer = await calcStatisticOfAnswer(answer.id, totalNumberAnswers); 
-        const users = await getUsersChooseAnswer(answer.id);
+        const users = await getUsersChooseTheAnswer(answer.id, selectedUsers);
+        const perCent = await calcPerCent(totalNumberOfAnswers, users.length); 
         const answerItem = {
           id: answer.id,
           title: answer.title,
-          perCent: statisticOfAnswer.perCent,
-          number: statisticOfAnswer.number,
-          users,
+          totalNumberAnswers: totalNumberOfAnswers,
+          perCent: perCent.perCent,
+          number: users.length,
+          users
         };
         questionItem.answers.push(answerItem);
       }
@@ -64,19 +74,39 @@ class StatisticController {
   }
 }
 
-async function calcTotalNumberAnswers(questionId) {
-  const passageQuestionIds = await PassageQuestion.findAll({where: {questionId}})
-    .then(passageQuestions => passageQuestions.map(passageQuestion => passageQuestion.id));
+async function getFilteredPassageQuestions(formId, selectedUsers, selectedQuestions) {
+  const filteredPassageQuestions = [];
+  const allPassages = await PassageForm.findAll({where: {formId}});
+  for(const passage of allPassages) {
+    if(selectedUsers.includes(passage.userId)) {
+      const allPassageQuestions = await PassageQuestion.findAll({where: {passageFormId: passage.id}});
+      for(const passageQuestion of allPassageQuestions) {
+        if(selectedQuestions.includes(passageQuestion.questionId)) filteredPassageQuestions.push(passageQuestion);
+      }
+    } 
+  }
+  return filteredPassageQuestions;
+}
+
+async function calcTotalNumberOfAnswers(questionId, filteredPassageQuestions) {
+  const passageQuestions = filteredPassageQuestions.filter(passageQuestion => passageQuestion.questionId === questionId);
   let totalNumber = 0;
-  for(const passageQuestionId of passageQuestionIds) {
-    const numberOfOnePassage = await PassageAnswer.count({where: {passageQuestionId}});
+  for(const passageQuestion of passageQuestions) {
+    const numberOfOnePassage = await PassageAnswer.count({where: {passageQuestionId: passageQuestion.id}});
     totalNumber += numberOfOnePassage;
   }
   return totalNumber;
 }
 
-async function calcStatisticOfAnswer(answerId, totalNumber) {
-  const numberOfPassage = await PassageAnswer.count({where: {answerId}});
+function filterQuestionDb(questions, selectQuestions) {
+  const filterQuestionDb = [];
+  for(const question of questions) {
+    if(selectQuestions.includes(question.id)) filterQuestionDb.push(question);
+  }
+  return filterQuestionDb;
+}
+
+async function calcPerCent(totalNumber, numberOfPassage) {
   const perCent = Math.floor(100 * numberOfPassage / totalNumber);
   const statistic = {
     perCent: perCent,
@@ -85,8 +115,8 @@ async function calcStatisticOfAnswer(answerId, totalNumber) {
   return statistic;
 }
 
-async function getUsersChooseAnswer(answerId) {
-  const users = [];
+async function getUsersChooseTheAnswer(answerId, selectedUsers) {
+  const allUsers = [];
   const passageAnswers = await PassageAnswer.findAll({where: {answerId}});
   for(const passageAnswer of passageAnswers) {
     const passageQuestions = await PassageQuestion.findAll({where: {id: passageAnswer.passageQuestionId}});
@@ -94,9 +124,13 @@ async function getUsersChooseAnswer(answerId) {
       const passageForms = await PassageForm.findAll({where: {id: passageQuestion.passageFormId}});
       for(const passageForm of passageForms) {
         const user = await User.findByPk(passageForm.userId);
-        users.push(user.nickname);
+        allUsers.push(user);
       } 
     } 
+  }
+  const users = [];
+  for(const user of allUsers) {
+    if(selectedUsers.includes(user.id)) users.push(user.nickname);
   }
   return users; 
 }

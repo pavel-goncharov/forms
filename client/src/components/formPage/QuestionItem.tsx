@@ -1,63 +1,108 @@
-import {Button, Collapse} from 'antd';
+import {Button, Collapse, message, Popconfirm} from 'antd';
 import {FC, ReactNode, useState} from 'react';
-import { IAnswer, IQuestion } from '../../models/form';
-import { initAnswers } from '../../utils/initData';
+import { IAnswerFormPage, IQuestionFormPage } from '../../models/form';
 import AnswerItem from './AnswerItem';
 import classes from '../../styles/formPage/QuestionItem.module.less';
-import {DeleteOutlined, PlusSquareOutlined} from '@ant-design/icons';
+import {DeleteOutlined} from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
-
+import { useActions } from '../../hooks/useActions';
 
 interface QuestionItemProps {
-  question: IQuestion;
+  question: IQuestionFormPage;
+  remove: (id: number) => void;
+  index: number;
   isEditMode: boolean;  
 }
 
-const QuestionItem: FC<QuestionItemProps> = ({question, isEditMode}) => {
+const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMode}) => {
 
-  const [questionText, setQuestionText] = useState<string>(question.title);
-  
-  function getAnswersQuestion(answers: IAnswer[], questionId: number): IAnswer[] {
-    return answers.filter(answer => answer.idQuestion === questionId);
-  }
+  const {deleteQuestion, updateQuestion, addAnswer} = useActions();
 
-  const headerButtons: ReactNode[] = [
-    <Button key="delete"><DeleteOutlined/></Button>,
-    <Button key="add"><PlusSquareOutlined/></Button>,
-  ]; 
+  const [title, setTitle] = useState<string>(question.title);
+  const [answerItems, setAnswerItems] = useState<IAnswerFormPage[]>(question.answers);
 
-  const extra: ReactNode[] | null = isEditMode ? headerButtons : null;
+  const editHeaderButton: ReactNode =
+    <div onClick={e => e.stopPropagation()}>
+      <Popconfirm
+        placement="bottomRight"
+        title={`Are you sure to delete the question ${index}?`}
+        onConfirm={handlerRemove}
+        okText="Yes"
+        cancelText="No"
+        key="delete"
+        >
+          <Button><DeleteOutlined/></Button>
+        </Popconfirm>
+    </div>; 
+
+  const extra: ReactNode | null = isEditMode ? editHeaderButton : null;
   const classQuestionItem = isEditMode ? classes.questionItemEdit : classes.questionItemPlay; 
 
-  const answerItems: IAnswer[] = getAnswersQuestion(initAnswers, question.id);
+  function handlerRemove() {
+    deleteQuestion(question.id);
+    remove(question.id);
+  }
 
+  function handlerUpdate(newValue: string) {
+    setTitle(newValue);
+    const updatedQuestion = {
+      id: question.id,
+      newValue
+    };
+    updateQuestion(updatedQuestion);
+  }
+
+  function newAnswer() {
+    const temporaryId = Number(new Date());
+    const answer = {id: temporaryId, title: '', isChecked: false};
+    const argAction = {
+      questionId: question.id,
+      newAnswer: answer
+    };
+    addAnswer(argAction);
+    setAnswerItems([...answerItems, answer]);
+  }
+
+  function removeAnswer(id: number) {
+    setAnswerItems(answerItems.filter(answer => answer.id !== id));
+    const textMessage = `Answer deleted`;
+    message.success(textMessage);
+  }
+  
   return (
     <Collapse 
-      defaultActiveKey={[1, 2]}
+      defaultActiveKey={[question.id]}
       className={classQuestionItem}
     >
       <Collapse.Panel 
-        header={'Question\n' + question.id}
+        header={'Question\n' + index}
         key={question.id}
         extra={extra}
       >
         <div className={classes.textContainer}>
           {isEditMode ?
             <TextArea 
-              value={questionText}
-              onChange={e => setQuestionText(e.target.value)} 
-              placeholder={`Question ${question.id}`}
+              value={title}
+              onChange={e => handlerUpdate(e.target.value)} 
+              placeholder={`Question ${index}`}
               rows={2}
             />
             :
-            <>{questionText}</>
+            <>{title}</>
           }
         </div>        
         <ul className={classes.answers}>
-          {answerItems.map((answer, index) => 
-            <AnswerItem answer={answer} isEditMode={isEditMode} index={index + 1} key={answer.id}/>
+          {answerItems?.map((answer, index) => 
+            <AnswerItem
+              questionId={question.id} 
+              answer={answer}
+              remove={removeAnswer}
+              isEditMode={isEditMode}
+              index={index + 1}
+              key={answer.id}
+            />
           )}
-          {isEditMode && <Button>Add answer</Button>}
+          {isEditMode && <Button onClick={newAnswer}>Add answer</Button>}
         </ul>
       </Collapse.Panel>
     </Collapse>

@@ -5,6 +5,8 @@ const userRouter = new Router();
 
 userRouter.post('/signup', UserController.signUp);
 userRouter.post('/login', UserController.login);
-userRouter.get('/nickname', UserController.getNickname);
+userRouter.get('/refresh', UserController.refreshToken);
+userRouter.get('/logout', UserController.logOut);
+userRouter.get('/:id/nickname', UserController.getNickname);
 
 export default userRouter;

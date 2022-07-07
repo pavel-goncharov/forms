@@ -1,15 +1,23 @@
 @import '../mixins.less';
 
-.title {
+.title(@borderBottom: none) {
   padding: 10px 20px;
-  border-bottom: 2px solid #a190d3;
   background-color: #5d44a9;
   color: #fff;
   .flex(@justify: space-between);
+  border-bottom: @borderBottom;
   .text{
     padding-left: 5px;
   }
 }
+
+.titleQuestion {
+  .title(@borderBottom: 2px solid #a190d3);
+}
+.titleUser {
+  .title();
+}
+
 .switches {
   button + button {
     margin-left: 10px;
@@ -20,4 +28,10 @@
       top: 1px;
     }
   }
+}
+.listItems {
+  background-color: #ecf7fc;
+}
+.hidden {
+  display: none;
 }

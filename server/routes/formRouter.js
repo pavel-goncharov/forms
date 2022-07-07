@@ -6,6 +6,6 @@ const formRouter = new Router();
 formRouter.get('/:id', FormController.getQuestionItems);
 formRouter.get('/:id/title', FormController.getFormTitle);
 formRouter.get('/:id/author', FormController.getAuthor);
-formRouter.delete('/', FormController.deleteForm);
+formRouter.delete('/:id', FormController.deleteForm);
 
 export default formRouter;

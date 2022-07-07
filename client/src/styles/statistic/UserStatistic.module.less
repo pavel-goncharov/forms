@@ -1,0 +1,12 @@
+@import '../mixins.less';
+
+.user {
+  .flex(@justify: flex-start);
+  .avatar {
+    margin-right: 3px;
+    background-color: #7265e6;         
+  }
+}
+.user:not(:last-child) {
+  margin-right: 5px;
+}
