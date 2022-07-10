@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {Avatar} from 'antd';
 import {Header} from 'antd/lib/layout/layout';
 import logoImg from '../assets/logo512.png';
@@ -10,15 +10,29 @@ import {publicPages, privatePages} from '../utils/modeData/navbar';
 import {IPage} from '../models/landing';
 import {Paths} from '../routes';
 import { LocalStorage } from '../utils/constants';
+import userApi from '../api/extended/userApi';
 
 const Navbar: FC = () => {
+  const [logout] = userApi.useLogoutMutation();
+  const [fastLogout] = userApi.useFastLogoutMutation();
   const isAuth= useAppSelector(state => state.user.isAuth);
   const nickname = useAppSelector(state => state.user.user?.nickname);
+
   const {setUser, setAuth} = useActions();
+
 
   const location = useLocation();
 
-  function logOut(): void {
+  async function fastLogOut() {
+    await fastLogout();
+	  localStorage.removeItem('user');
+    console.log('logout');
+    setUser(null);
+    setAuth(false); 
+  }
+
+  async function logOut() {
+    await logout();
     setUser(null);
     setAuth(false); 
     localStorage.removeItem(LocalStorage.TOKEN);

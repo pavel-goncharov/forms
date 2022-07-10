@@ -12,6 +12,7 @@ import formApi from '../api/extended/formApi';
 import { useAppSelector } from '../hooks/useAppSelector';
 import editApi from '../api/extended/editApi';
 import statisticApi from '../api/extended/statisticApi';
+import { IQuestionEditor } from '../models/edit';
 
 interface HeaderProps {
   mode: HeaderModes,
@@ -94,6 +95,8 @@ const Header: FC<HeaderProps> = ({mode, formId, sendPassage}) => {
         title: answer.title
       }))
     }));
+    const isValidateQuestions = checkingValiditySavedForm(editQuestions);
+    // -----------------------------------------------------------------------
     const argEndpoint = {
       formId,
       editQuestions
@@ -103,6 +106,28 @@ const Header: FC<HeaderProps> = ({mode, formId, sendPassage}) => {
     const messageText = res.data;
     message.success(messageText);
   }
+
+  function checkingValiditySavedForm(editQuestions: IQuestionEditor[]): boolean {
+    if(!editQuestions.length) return false;
+    for(const question of editQuestions) {
+      if(!question.title) return false;
+      if(question.answers.length < 2) return false;
+      for(const answer of question.answers) {
+        if(!answer.title) return false;
+      }
+    }
+    return true;
+  }
+  // Error
+  // Form1 can\'t be saved because it contains invalid data. 
+  // Form Rules:
+  // Г 1) The form must contain at least 1 question.
+  //      Mistake: Form1 has no questions.
+  // Г 2) The form question must have at least 2 answers.
+  //      Mistakes: question N,.
+  // Г 3) The title of questions and answers must be completed.
+  //      Mistakes: question N, answer N of question N.
+
 
   function toPlay() {
     navigateItem.goTo(Paths.PLAY, formId);

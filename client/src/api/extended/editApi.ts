@@ -8,6 +8,7 @@ const editApi = appApi.injectEndpoints({
     getInfo: build.query<IFormInfo, number>({
       query: (id) => calcDynamicUrl(EditUrls.INFO, id),
       providesTags: [apiTags.form]
+
     }), 
     updateInfo: build.mutation<string, IDataInfo>({
       query: (arg) => {
@@ -31,7 +32,7 @@ const editApi = appApi.injectEndpoints({
           body: editQuestions
         } 
       },
-      // invalidatesTags: []
+      invalidatesTags: [apiTags.form]
     }),
   })
 });

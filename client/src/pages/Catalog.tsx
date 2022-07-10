@@ -1,26 +1,29 @@
 import {FC, useEffect, useState} from 'react';
 import CatalogItem from '../components/catalog/CatalogItem';
 import classes from '../styles/catalog/Catalog.module.less';
-import {Button, Input} from 'antd';
+import {Button, Input, Spin} from 'antd';
 import catalogApi from '../api/extended/catalogApi';
 import { ICatalogItem } from '../models/form';
 import formApi from '../api/extended/formApi';
 import ModalNewItem from '../components/catalog/ModalNewItem';
 import {ICatalogItemParams} from '../models/catalog';
+import { Empty } from 'antd';
 
 const Catalog: FC = () => {
-  const {data: items} = catalogApi.useFetchItemsQuery();
+  const [skip, setSkip] = useState<boolean>(false);
+
+  const {data: items, isLoading} = catalogApi.useFetchItemsQuery(null, {skip});
   const [deleteItem] = formApi.useDeleteItemMutation();
   const [createItem] = catalogApi.useCreateItemMutation(); 
-
 
   const [catalogItems, setCataloItems] = useState<ICatalogItem[] | undefined>();
   const [formTitle, setFormTitle] = useState<string>('');
   const [modalNewItemVisible, setModalNewItemVisible] = useState(false);
 
   useEffect(() => {
-    setCataloItems(items);
-  }, [items]);
+    if(skip) setCataloItems([]);
+    else setCataloItems(items);
+  }, [items, skip]);
   
   function searchItems() {
     const searchedItems = items?.filter(item => item.title.includes(formTitle));
@@ -49,6 +52,7 @@ const Catalog: FC = () => {
   return (
     <div className={classes.catalog}>
       <div className={classes.buttons}>
+        <button onClick={() => setSkip(!skip)}>handlerSkip</button>
         <Button onClick={showModalNewItem} size="large">New</Button>
         <ModalNewItem
           visible={modalNewItemVisible}
@@ -64,6 +68,13 @@ const Catalog: FC = () => {
         {catalogItems?.map(form => 
           <CatalogItem form={form} remove={removeCatalogItem}key={form.id}/>
         )}
+        {!catalogItems?.length && !isLoading && 
+          <Empty/>
+        }
+        {!catalogItems?.length && isLoading &&
+          <Spin size="large" />
+        }
+        {}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ interface UserState {
 
 const initialState: UserState = {
   isAuth: false,
-  user: null
+  user: null,
 };
 
 const userSlice = createSlice({
@@ -21,7 +21,7 @@ const userSlice = createSlice({
     },
     setUser(state, action) {
       state.user = action.payload;
-    }
+    },
   }, 
 });
 

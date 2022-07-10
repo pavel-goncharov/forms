@@ -10,7 +10,7 @@ const formApi = appApi.injectEndpoints({
         url: calcDynamicUrl(FormUrls.DELETE, id),
         method: HttpMethods.DELETE,
       }),
-      invalidatesTags: [apiTags.catalog]
+      invalidatesTags: [apiTags.form]
     }),
     fetchTitle: build.query<string, number>({
       query: (id) => calcDynamicUrl(FormUrls.TITLE, id),

@@ -1,7 +1,7 @@
 import {FC, useState} from 'react';
 import classes from '../../styles/statistic/FilterPart.module.less';
 import {FilterOutlined, EyeOutlined, EyeInvisibleOutlined} from '@ant-design/icons';
-import { Switch } from 'antd';
+import { Empty, Switch } from 'antd';
 import SelectQuestion from './SelectQuestion';
 import SelectUser from './SelectUser';
 import { IFilterQuestion, IFilterUser } from '../../models/statistic';
@@ -57,8 +57,9 @@ const FilterPart: FC<FilterPartProps> = ({title, filterQuestions, filterUsers}) 
             isAll={isAll}
             index={index} 
             key={question.id}
-            />
+          />
         )}
+        {isQuestionFilter && !filterQuestions?.length && <Empty style={{padding: '15px'}}/>}
         {!isQuestionFilter && filterUsers?.map((user, index) => 
           <SelectUser 
             user={user}
@@ -67,6 +68,7 @@ const FilterPart: FC<FilterPartProps> = ({title, filterQuestions, filterUsers}) 
             key={user.id}
           />
         )}
+        {!isQuestionFilter && !filterUsers?.length && <Empty style={{padding: '15px'}}/>}
       </ul>
     </div>
   );

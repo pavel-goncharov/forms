@@ -7,7 +7,6 @@ export const FilterCollapsePanel = {
 }
 
 export const apiTags = {
-  catalog: 'Catalog',
   form: 'Form'
 }
 
@@ -15,7 +14,8 @@ export enum UserUrls {
   SIGN_UP = '/user/signup',
   LOGIN = '/user/login',
   AUTH = '/user/auth',
-  NICKNAME = '/user/:id/nickname'
+  NICKNAME = '/user/:id/nickname',
+  GET_ME = 'user/me'
 }
 
 export enum CatalogUrls {

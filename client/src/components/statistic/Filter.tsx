@@ -1,5 +1,5 @@
 import {Button, Collapse} from 'antd';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import statisticApi from '../../api/extended/statisticApi';
 import {useActions} from '../../hooks/useActions';
 import {FilterCollapsePanel, FilterParts} from '../../utils/constants';
@@ -23,19 +23,17 @@ const Filter: FC<FilterProps> = ({formId}) => {
 
   const {setStatisticQuestions} = useActions();
 
-  // useEffect(() => {
-  //   searchStatistic();
-  // }, []);
+  // ----------------------------------------------------------------------------------------
+  useEffect(() => {
+    if(selectedQuestions.length && selectedUsers.length) searchStatistic();
+  }, []);
 
   async function searchStatistic() {
-    if(selectedQuestions && selectedUsers) {
-      const filter = getFilterFormatForServer(selectedQuestions, selectedUsers);
-      const argReq: calcStatisticArg = {id: formId, filter};
-      const res = await calcStatistic(argReq);
-      if (!("data" in res)) return;
-      const statisticQuestions = res.data;
-      setStatisticQuestions(statisticQuestions);
-    }
+    console.log(selectedQuestions, selectedUsers);
+    const filter = getFilterFormatForServer(selectedQuestions, selectedUsers);
+    const argReq: calcStatisticArg = {id: formId, filter};
+    const statisticQuestions = await calcStatistic(argReq).unwrap();
+    setStatisticQuestions(statisticQuestions);
   }
   
   function getFilterFormatForServer(filterQuestions: IFilterQuestion[], filterUsers: IFilterUser[]) {

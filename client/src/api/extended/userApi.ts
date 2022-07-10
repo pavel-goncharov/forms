@@ -1,4 +1,5 @@
-import {ISignUp, ISignUpParams, ILogin, ILoginParams} from "../../models/auth";
+import {ISignUp, ISignUpParams, ILogin, ILoginParams, IFastSignUp, ILoginError} from "../../models/auth";
+import { IUser } from "../../models/user";
 import {UserUrls, HttpMethods} from "../../utils/constants";
 import appApi from "../appApi";
 
@@ -21,8 +22,23 @@ const userApi = appApi.injectEndpoints({
     checkAuth: build.query<ILogin, void>({
       query: () => UserUrls.AUTH
     }),
-    fetchNickname: build.query<string, number>({
-      query: (id) => UserUrls.NICKNAME + id
+    getMe: build.mutation<IUser, void>({
+      query: () => ({
+        url: UserUrls.GET_ME,
+        method: HttpMethods.POST,
+      }) 
+    }),
+    logout: build.mutation<void, void>({
+      query: () => ({
+        url: '/user/logout',
+        method: HttpMethods.POST
+      }),
+    }),
+    refreshToken: build.mutation<ILogin, void>({
+      query: () => ({
+        url: '/user/refresh',
+        method: HttpMethods.POST
+      })
     })
   })
 });

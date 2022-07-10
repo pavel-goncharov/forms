@@ -80,7 +80,6 @@ const FormPage: FC = () => {
     message.success(textMessage);
   }
 
-  
   return (
     <div className={classes.formPage}>
       <Header 

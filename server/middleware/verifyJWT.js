@@ -1,15 +1,15 @@
 import JWT from 'jsonwebtoken';
 
 function verifyJWT(req, res, next) {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
-  
-  if (!authHeader?.startsWith('Bearer ')) return res.sendStatus(401);
-  
-  const token = authHeader.split(' ')[1];
+  const cookies = req.cookies;
+
+  if(!cookies?.accessToken) return res.status(401).json({message: 'No token'});
+
+  const { accessToken } = cookies;
   const privateKey = process.env.ACCESS_TOKEN_SECRET;
-  JWT.verify(token, privateKey, (err, decoded) => {
+  JWT.verify(accessToken, privateKey, (err, decoded) => {
     // Invalid token
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).json({message: 'Invalid token'});
 
     req.user = decoded;
     next();

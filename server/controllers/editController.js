@@ -8,6 +8,7 @@ async function dropOldItems(formId, currentItems) {
   const dbQuestions = await Question.findAll({where: {formId}});
   const dbQuestionsIds = getArrayOfId(dbQuestions);
   const currentQuestionsIds = getArrayOfId(currentItems);
+
   for(let i = 0; i < dbQuestionsIds.length; i++) {
     const questionId = dbQuestionsIds[i];
     const indexQuestion = currentQuestionsIds.indexOf(dbQuestionsIds[i]);
@@ -52,19 +53,17 @@ async function updateItemsTitles(formId, currentItems) {
 async function createItems(formId, currentItems) {
   const dbQuestions = await Question.findAll({where: {formId}});
   const dbQuestionIds = getArrayOfId(dbQuestions);
+  
   for(const currentItem of currentItems) {
     if(!dbQuestionIds.includes(currentItem.id)) {
-      // const newQuestionItem = await Question.create({id: currentItem.id, title: currentItem.title, formId});
       const newQuestionItem = await Question.create({title: currentItem.title, formId});
       for(const newAnswer of currentItem.answers) {
-        // await Answer.create({id: newAnswer.id, title: newAnswer.title, questionId: newQuestionItem.id});
         await Answer.create({title: newAnswer.title, questionId: newQuestionItem.id});
       }
     } else {
       for(const currentAnswer of currentItem.answers) {
         const answerDb = await Answer.findByPk(currentAnswer.id);
         if(answerDb === null) {
-          // await Answer.create({id: currentAnswer.id, title: currentAnswer.title, questionId: currentItem.id});
           await Answer.create({title: currentAnswer.title, questionId: currentItem.id});
         }
       }

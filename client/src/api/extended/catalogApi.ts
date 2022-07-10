@@ -5,9 +5,9 @@ import appApi from "../appApi";
 
 const catalogApi = appApi.injectEndpoints({
   endpoints: (build) => ({
-    fetchItems: build.query<ICatalogItem[], void>({
+    fetchItems: build.query<ICatalogItem[], null>({
       query: () => CatalogUrls.FORMS,
-      providesTags: [apiTags.catalog, apiTags.form]
+      providesTags: [apiTags.form]
     }),
     createItem: build.mutation<ICatalogItemDb, ICatalogItemParams>({
       query: (item) => ({
@@ -15,7 +15,7 @@ const catalogApi = appApi.injectEndpoints({
         method: HttpMethods.POST,
         body: item
       }),
-      invalidatesTags: [apiTags.catalog]
+      invalidatesTags: [apiTags.form]
     })
   })
 });
