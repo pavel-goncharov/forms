@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {sections} from '../utils/layoutData/landing';
+import {sections} from '../static/landing';
 import Logo from '../components/landing/Logo';
 import Opportunity from '../components/landing/Opportunity';
 import Update from '../components/landing/Update';

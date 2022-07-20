@@ -1,4 +1,4 @@
-import {Answer, Form, Question, User} from "../models/tables.js";
+import {Answer, Form, PassageAnswer, PassageForm, PassageQuestion, Question} from "../models/tables.js";
 
 class FormController {
   async getQuestionItems(req, res) {
@@ -28,22 +28,33 @@ class FormController {
   async getFormTitle(req, res) {
     const id = req.params.id;
     const formTitle = await Form.findByPk(id).then(form => form.title);
-    return res.json(formTitle);
-  }
-  
-  async getAuthor(req, res) {
-    const id = req.params.id;
-    const idAuthor = await Form.findOne({where: {userId: id}}).then(form => form.userId);
-    const author = await User.findOne({where: {id: idAuthor}}).then(user => user.nickname);
-    return res.json(author);
+    return res.status(200).json(formTitle);
   }
   
   async deleteForm(req, res) {
     const id = req.params.id;
+
     const formTitle = await Form.findByPk(id).then(form => form.title);
     await Form.destroy({where: {id: id}});
     const message = `Form ${formTitle} deleted`;
+
+    await PassageForm.destroy({where: {formId: null}});
+
+    await Question.destroy({where: {formId: null}});
+    await PassageQuestion.destroy({where: {questionId: null}});
+
+    await Answer.destroy({where: {questionId: null}});
+    await PassageAnswer.destroy({where: {answerId: null}});
+
     return res.json(message);
+  }
+
+  async checkIsAuthorForm(req, res) {
+    const id = req.params.id;
+    const userId = req.user.id;
+    const form = await Form.findOne({where: {id, userId}});
+    const isAuthor = Boolean(form);
+    return res.status(200).json(isAuthor);  
   }
 }
 

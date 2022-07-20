@@ -1,6 +1,6 @@
-import {ICatalogItem} from "../../models/form";
-import {createSlice} from "@reduxjs/toolkit";
-import {SliceNames} from "../../utils/constants";
+import {ICatalogItem} from '../../types/form';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {SliceNames} from '../../constants/slices';
 
 interface CatalogState {
   items: ICatalogItem[],
@@ -16,10 +16,10 @@ const catalogSlice = createSlice({
   name: SliceNames.CATALOG,
   initialState,
   reducers: {
-    setItems(state, action) {
+    setItems(state, action: PayloadAction<ICatalogItem[]>) {
       state.items = action.payload;
     },
-    setSearchedItems(state, action) {
+    setSearchedItems(state, action: PayloadAction<ICatalogItem[]>) {
       state.searchedItems = action.payload;
     }
   }

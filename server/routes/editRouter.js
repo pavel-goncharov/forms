@@ -1,17 +1,12 @@
 import Router from 'express';
-import editController from '../controllers/editController.js'
+import EditController from '../controllers/editController.js'
 import verifyJWT from '../middleware/verifyJWT.js';
+import {EditRoutes} from '../constants/api.js';
 
 const editRouter = new Router();
 
-editRouter.get('/:id/info', verifyJWT, editController.getInfoForm);
-editRouter.put('/:id/info', verifyJWT, editController.updateInfoForm);
-editRouter.put('/:id/save', verifyJWT, editController.saveForm);
-
-// for postman
-// editRouter.post('/:id/question', editController.createQuestion);
-// editRouter.delete('/question/:id', editController.deleteQuestion);
-// editRouter.post('/question/:id/answer', editController.createAnswer);
-// editRouter.delete('/answer/:id', editController.deleteAnswer);
+editRouter.get(EditRoutes.INFO, verifyJWT, EditController.getInfoForm);
+editRouter.put(EditRoutes.INFO, verifyJWT, EditController.updateInfoForm);
+editRouter.put(EditRoutes.SAVE, verifyJWT, EditController.saveForm);
 
 export default editRouter;

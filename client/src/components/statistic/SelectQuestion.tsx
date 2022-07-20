@@ -1,16 +1,16 @@
 import {FC, useEffect, useState} from 'react';
 import {Checkbox} from 'antd';
 import classes from '../../styles/statistic/SelectQuestion.module.less';
-import { IFilterQuestion } from '../../models/statistic';
-import { useActions } from '../../hooks/useActions';
+import {IFilterItem} from '../../types/statistic';
+import {useActions} from '../../hooks/useActions';
 
-interface SelectQuestionProps {
-  question: IFilterQuestion;
+interface Props {
+  question: IFilterItem;
   isAll: boolean;
   index: number;
 }
 
-const SelectQuestion: FC<SelectQuestionProps> = ({question, isAll, index}) => {
+const SelectQuestion: FC<Props> = ({question, isAll, index}) => {
   const {addSelectedQuestion, deleteSelectedQuestion} = useActions();
 
   const [isSelected, setIsSelected] = useState<boolean>(isAll);
@@ -19,7 +19,7 @@ const SelectQuestion: FC<SelectQuestionProps> = ({question, isAll, index}) => {
     handlerIsSelected(isAll);
   }, [isAll]);
 
-  function handlerIsSelected(newValue: boolean) {
+  function handlerIsSelected(newValue: boolean): void {
     setIsSelected(newValue);
     if(newValue) addSelectedQuestion(question);
     else deleteSelectedQuestion(question.id);

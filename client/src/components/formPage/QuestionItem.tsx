@@ -1,35 +1,38 @@
 import {Button, Collapse, message, Popconfirm} from 'antd';
 import {FC, ReactNode, useState} from 'react';
-import { IAnswerFormPage, IQuestionFormPage } from '../../models/form';
+import {IAnswer, IQuestion} from '../../types/form';
 import AnswerItem from './AnswerItem';
 import classes from '../../styles/formPage/QuestionItem.module.less';
 import {DeleteOutlined} from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
-import { useActions } from '../../hooks/useActions';
+import {useActions} from '../../hooks/useActions';
+import {BtnTitles, BtnKeys, popConfirmArgs, popConfirmPlacements, textAreaRows} from '../../constants/layout';
+import {getTitlePopConfirmDeleteQuestion} from '../../utils/messages';
 
-interface QuestionItemProps {
-  question: IQuestionFormPage;
-  remove: (id: number) => void;
+interface Props {
+  question: IQuestion;
+  remove?: (id: number) => void;
   index: number;
   isEditMode: boolean;  
 }
 
-const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMode}) => {
-
+const QuestionItem: FC<Props> = ({question, remove, index, isEditMode}) => {
   const {deleteQuestion, updateQuestion, addAnswer} = useActions();
 
   const [title, setTitle] = useState<string>(question.title);
-  const [answerItems, setAnswerItems] = useState<IAnswerFormPage[]>(question.answers);
+  const [answerItems, setAnswerItems] = useState<IAnswer[]>(question.answers);
+
+  const titlePopConfirmDeleteQuestion: string = getTitlePopConfirmDeleteQuestion(index);
 
   const editHeaderButton: ReactNode =
     <div onClick={e => e.stopPropagation()}>
       <Popconfirm
-        placement="bottomRight"
-        title={`Are you sure to delete the question ${index}?`}
+        placement={popConfirmPlacements.BOTTOM_RIGHT}
+        title={titlePopConfirmDeleteQuestion}
         onConfirm={handlerRemove}
-        okText="Yes"
-        cancelText="No"
-        key="delete"
+        okText={popConfirmArgs.okText}
+        cancelText={popConfirmArgs.cancelText}
+        key={BtnKeys.DELETE}
         >
           <Button><DeleteOutlined/></Button>
         </Popconfirm>
@@ -38,12 +41,12 @@ const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMod
   const extra: ReactNode | null = isEditMode ? editHeaderButton : null;
   const classQuestionItem = isEditMode ? classes.questionItemEdit : classes.questionItemPlay; 
 
-  function handlerRemove() {
+  function handlerRemove(): void {
     deleteQuestion(question.id);
-    remove(question.id);
+    remove!(question.id);
   }
 
-  function handlerUpdate(newValue: string) {
+  function handlerUpdate(newValue: string): void {
     setTitle(newValue);
     const updatedQuestion = {
       id: question.id,
@@ -52,7 +55,7 @@ const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMod
     updateQuestion(updatedQuestion);
   }
 
-  function newAnswer() {
+  function newAnswer(): void {
     const temporaryId = Number(new Date());
     const answer = {id: temporaryId, title: '', isChecked: false};
     const argAction = {
@@ -63,9 +66,9 @@ const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMod
     setAnswerItems([...answerItems, answer]);
   }
 
-  function removeAnswer(id: number) {
+  function removeAnswer(id: number): void {
     setAnswerItems(answerItems.filter(answer => answer.id !== id));
-    const textMessage = `Answer deleted`;
+    const textMessage = 'Answer deleted';
     message.success(textMessage);
   }
   
@@ -75,7 +78,7 @@ const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMod
       className={classQuestionItem}
     >
       <Collapse.Panel 
-        header={'Question\n' + index}
+        header={`Question ${index}`}
         key={question.id}
         extra={extra}
       >
@@ -85,7 +88,7 @@ const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMod
               value={title}
               onChange={e => handlerUpdate(e.target.value)} 
               placeholder={`Question ${index}`}
-              rows={2}
+              rows={textAreaRows.QUESTION}
             />
             :
             <>{title}</>
@@ -102,7 +105,7 @@ const QuestionItem: FC<QuestionItemProps> = ({question, remove, index, isEditMod
               key={answer.id}
             />
           )}
-          {isEditMode && <Button onClick={newAnswer}>Add answer</Button>}
+          {isEditMode && <Button onClick={newAnswer}>{BtnTitles.ADD_ANSWER}</Button>}
         </ul>
       </Collapse.Panel>
     </Collapse>

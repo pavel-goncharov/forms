@@ -1,13 +1,13 @@
 import {FC} from 'react';
-import {IDevStackSection} from '../../models/landing';
+import {IDevStackSection} from '../../types/landing';
 import DevStackSubsection from './DevStackSubsection';
 import classes from '../../styles/landing/DevStack.module.less';
 
-interface DevStackProps {
+interface Props {
   devStack: IDevStackSection;
 }
 
-const DevStack: FC<DevStackProps> = ({devStack}) => {
+const DevStack: FC<Props> = ({devStack}) => {
   return (
     <section className={classes.devStack}>
       <h2 className={classes.title}>{devStack.title}</h2>

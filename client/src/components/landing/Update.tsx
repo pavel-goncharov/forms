@@ -1,13 +1,13 @@
 import {FC} from 'react';
-import {IUpdateSection} from '../../models/landing';
+import {IUpdateSection} from '../../types/landing';
 import SectionItem from './SectionItem';
 import classes from '../../styles/landing/Update.module.less';
 
-interface UpdateProps {
+interface Props {
   update: IUpdateSection;
 }
 
-const Update: FC<UpdateProps> = ({update}) => {
+const Update: FC<Props> = ({update}) => {
   return (
     <section className={classes.update}>
       <h2 className={classes.title}>{update.title}</h2>

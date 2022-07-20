@@ -8,18 +8,15 @@
   .ant-page-header-heading-title {
     font-size: 1.5rem;
     color: #fff;
-    @media(max-width: 535px) {
-      max-width: 55px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   }
-  .ant-page-header-heading-tags {
-    position: relative;
-    top: 1px;
-    .ant-tag:hover {
-      color: #1890ff;
+  .ant-page-header-heading {
+    flex-wrap: nowrap;
+    .ant-page-header-heading-tags {
+      position: relative;
+      top: 1px;
+      .ant-tag:hover {
+        color: #1890ff;
+      }
     }
   }
   .ant-page-header-back-button {
@@ -33,12 +30,14 @@
 .ant-collapse {
   background-color: #2f2255;
   color: #fff;
-  font-size: 20px; 
   border: none;
   border-radius: 0px;
+  border-bottom: 2px solid #2f2255;
   .ant-collapse-item {
     border-bottom: none;
     .ant-collapse-header {
+      font-size: 20px; 
+      .flex(@justify: flex-start);
       padding: 12px 20px;
       color: #fff;
       .ant-collapse-extra {
@@ -63,14 +62,13 @@
       border-radius: 0px; 
       .ant-collapse-content-box {
         padding: 0px;
-        border-bottom: 2px solid #2f2255;
       }
     }
     &:last-child {
       border-radius: 0px;
     }
   }
-} 
+}
 
 
 

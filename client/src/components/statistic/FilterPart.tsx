@@ -1,35 +1,28 @@
 import {FC, useState} from 'react';
 import classes from '../../styles/statistic/FilterPart.module.less';
 import {FilterOutlined, EyeOutlined, EyeInvisibleOutlined} from '@ant-design/icons';
-import { Empty, Switch } from 'antd';
+import {Empty, Switch} from 'antd';
 import SelectQuestion from './SelectQuestion';
 import SelectUser from './SelectUser';
-import { IFilterQuestion, IFilterUser } from '../../models/statistic';
-import { FilterParts } from '../../utils/constants';
+import {IFilterItem} from '../../types/statistic';
+import {FilterParts, SwitchContents} from '../../constants/layout';
 
-interface FilterPartProps {
+interface Props {
   title: string;
-  filterQuestions?: IFilterQuestion[];
-  filterUsers?: IFilterUser[];
+  filterQuestions?: IFilterItem[];
+  filterUsers?: IFilterItem[];
 }
 
-const FilterPart: FC<FilterPartProps> = ({title, filterQuestions, filterUsers}) => {
-
-  const isQuestionFilter: boolean = (title === FilterParts.QUESTIONS);
-  const styleTitle = isQuestionFilter ? classes.titleQuestion : classes.titleUser;
-
+const FilterPart: FC<Props> = ({title, filterQuestions, filterUsers}) => {
   const [isAll, setIsAll] = useState<boolean>(true);
+  const [isShow, setIsShow] = useState<boolean>(true);
 
-  const [isShow, setIsShow] = useState<boolean>(isQuestionFilter);
   const classFilterList = isShow ? classes.listItems : classes.hidden;
-  
-  function handlerIsShow(newValue: boolean) {
-    setIsShow(newValue);
-  }
+  const isQuestionFilter: boolean = (title === FilterParts.QUESTIONS);
   
   return (
     <div>
-      <div className={styleTitle}>
+      <div className={classes.title}>
         <div>
           <FilterOutlined/>
           <span className={classes.text}>{title}</span>
@@ -38,12 +31,12 @@ const FilterPart: FC<FilterPartProps> = ({title, filterQuestions, filterUsers}) 
           <Switch
             checked={isAll}
             onChange={() => setIsAll(!isAll)}
-            checkedChildren='All'
-            unCheckedChildren='All'
+            checkedChildren={SwitchContents.ALL}
+            unCheckedChildren={SwitchContents.ALL}
           />
           <Switch
             checked={isShow}
-            onChange={() => handlerIsShow(!isShow)}
+            onChange={() => setIsShow(!isShow)}
             checkedChildren={<EyeOutlined/>}
             unCheckedChildren={<EyeInvisibleOutlined/>}
             className={classes.switchEye}
@@ -59,7 +52,7 @@ const FilterPart: FC<FilterPartProps> = ({title, filterQuestions, filterUsers}) 
             key={question.id}
           />
         )}
-        {isQuestionFilter && !filterQuestions?.length && <Empty style={{padding: '15px'}}/>}
+        {isQuestionFilter && !filterQuestions?.length && <Empty className={classes.empty}/>}
         {!isQuestionFilter && filterUsers?.map((user, index) => 
           <SelectUser 
             user={user}
@@ -68,7 +61,7 @@ const FilterPart: FC<FilterPartProps> = ({title, filterQuestions, filterUsers}) 
             key={user.id}
           />
         )}
-        {!isQuestionFilter && !filterUsers?.length && <Empty style={{padding: '15px'}}/>}
+        {!isQuestionFilter && !filterUsers?.length && <Empty className={classes.empty}/>}
       </ul>
     </div>
   );

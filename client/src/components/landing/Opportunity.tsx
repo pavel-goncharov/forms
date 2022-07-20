@@ -1,13 +1,13 @@
 import {FC} from 'react';
-import {IOpportunitySection} from '../../models/landing';
+import {IOpportunitySection} from '../../types/landing';
 import SectionItem from './SectionItem';
 import classes from '../../styles/landing/Opportunity.module.less';
 
-interface OpportunityProps {
+interface Props {
   opportunity: IOpportunitySection;
 }
 
-const Opportunity: FC<OpportunityProps> = ({opportunity}) => {
+const Opportunity: FC<Props> = ({opportunity}) => {
   return (
     <section className={classes.opportunity}>
       <h2 className={classes.title}>{opportunity.title}</h2>

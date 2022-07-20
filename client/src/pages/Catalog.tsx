@@ -2,77 +2,74 @@ import {FC, useEffect, useState} from 'react';
 import CatalogItem from '../components/catalog/CatalogItem';
 import classes from '../styles/catalog/Catalog.module.less';
 import {Button, Input, Spin} from 'antd';
-import catalogApi from '../api/extended/catalogApi';
-import { ICatalogItem } from '../models/form';
-import formApi from '../api/extended/formApi';
-import ModalNewItem from '../components/catalog/ModalNewItem';
-import {ICatalogItemParams} from '../models/catalog';
-import { Empty } from 'antd';
+import {ICatalogItem} from '../types/form';
+import ModalNewCatalogItem from '../components/catalog/ModalNewCatalogItem';
+import {INewCatalogItemParams} from '../types/catalog';
+import {Empty} from 'antd';
+import {ClearOutlined} from '@ant-design/icons';
+import {BtnTitles, LARGE, Placeholders} from '../constants/layout';
+import {useCreateCatalogItemMutation, useFetchCatalogItemsQuery} from '../api/endPoints/catalog';
 
 const Catalog: FC = () => {
-  const [skip, setSkip] = useState<boolean>(false);
+  const {data: items, isLoading} = useFetchCatalogItemsQuery();
+  const [createItem] = useCreateCatalogItemMutation(); 
 
-  const {data: items, isLoading} = catalogApi.useFetchItemsQuery(null, {skip});
-  const [deleteItem] = formApi.useDeleteItemMutation();
-  const [createItem] = catalogApi.useCreateItemMutation(); 
-
-  const [catalogItems, setCataloItems] = useState<ICatalogItem[] | undefined>();
+  const [catalogItems, setCataloItems] = useState<ICatalogItem[]>([]);
   const [formTitle, setFormTitle] = useState<string>('');
   const [modalNewItemVisible, setModalNewItemVisible] = useState(false);
 
   useEffect(() => {
-    if(skip) setCataloItems([]);
-    else setCataloItems(items);
-  }, [items, skip]);
+    if(items) setCataloItems(items);
+  }, [items]);
   
-  function searchItems() {
-    const searchedItems = items?.filter(item => item.title.includes(formTitle));
-    setCataloItems(searchedItems);
+  function searchItems(title: string): void {
+    const searchedItems = items?.filter(item => item.title.includes(title));
+    setCataloItems(searchedItems || []);
   }
 
-  function removeCatalogItem(id: number): any {
-    const result = deleteItem(id);
-    return result;
+  function handlerClear(): void {
+    const emptyStr = '';
+    setFormTitle(emptyStr)
+    searchItems(emptyStr);
   }
 
-  function showModalNewItem() {
+  function handlerBtnNew(): void {
     setModalNewItemVisible(true);
   };
 
-  function handleCancelModalNewItem(): void {
+  function cancelModalNewItem(): void {
     setModalNewItemVisible(false);
   };
 
-  const createNewItem = (newItemData: ICatalogItemParams): void => {
-    createItem(newItemData);
+  async function createNewItem(newItemData: INewCatalogItemParams): Promise<void> {
+    await createItem(newItemData);
     setModalNewItemVisible(false);
   };
   
-
   return (
     <div className={classes.catalog}>
       <div className={classes.buttons}>
-        <button onClick={() => setSkip(!skip)}>handlerSkip</button>
-        <Button onClick={showModalNewItem} size="large">New</Button>
-        <ModalNewItem
+        <Button onClick={handlerBtnNew} size={LARGE}>{BtnTitles.NEW}</Button>
+        <ModalNewCatalogItem
           visible={modalNewItemVisible}
           create={createNewItem}
-          cancel={handleCancelModalNewItem}
+          cancel={cancelModalNewItem}
         />
-        <Input.Search placeholder="Search forms" size="large"
+        <Input.Search placeholder={Placeholders.SEARCH_FORMS} size={LARGE}
           value={formTitle} onChange={e => setFormTitle(e.target.value)}
-          onSearch={searchItems} enterButton className={classes.search}
+          onSearch={() => searchItems(formTitle)} enterButton className={classes.search}
+          suffix={<ClearOutlined onClick={handlerClear} className={classes.clear}/>}
         />
       </div>
       <div className={classes.items}>
         {catalogItems?.map(form => 
-          <CatalogItem form={form} remove={removeCatalogItem}key={form.id}/>
+          <CatalogItem form={form} key={form.id}/>
         )}
         {!catalogItems?.length && !isLoading && 
           <Empty/>
         }
         {!catalogItems?.length && isLoading &&
-          <Spin size="large" />
+          <Spin size={LARGE}/>
         }
         {}
       </div>

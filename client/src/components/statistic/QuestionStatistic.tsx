@@ -1,18 +1,17 @@
 import {FC} from 'react';
-import { IQuestionStatistic } from '../../models/statistic';
+import {IQuestionStatistic} from '../../types/statistic';
 import classes from '../../styles/statistic/QuestionStatistic.module.less';
 import AnswerStatistic from './AnswerStatistic';
 
-interface QuestionStatisticProps {
+interface Props {
   question: IQuestionStatistic;
-  index: number;
 }
 
-const QuestionStatistic: FC<QuestionStatisticProps> = ({question, index}) => {
+const QuestionStatistic: FC<Props> = ({question}) => {
   return (
     <>  
       <div className={classes.question}>
-        <div className={classes.questionNumber}>Question {index}</div>
+        <div className={classes.questionNumber}>Question.</div>
         <div className={classes.questionTitle}>{question.title}</div>
       </div>
       <ul className={classes.answers}>

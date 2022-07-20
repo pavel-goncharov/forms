@@ -6,6 +6,7 @@ import sequelize from './database/config.js';
 import * as tables from './models/tables.js';
 import router from './routes/index.js';
 import errorHandler from './middleware/ErrorHandlingMiddleware.js';
+import {API} from './constants/api.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -17,7 +18,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.use('/api', router);
+app.use(API, router);
 app.use(errorHandler);
 
 async function start() {

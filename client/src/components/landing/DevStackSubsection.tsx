@@ -1,14 +1,14 @@
 import {FC} from "react";
-import {IItem} from "../../models/landing";
+import {IItem} from "../../types/landing";
 import SectionItem from "./SectionItem";
 import classes from '../../styles/landing/DevStackSubsection.module.less';
 
-interface DevStackSubsectionProps {
+interface Props {
   subtitle: string;
   items: IItem[];
 }
 
-const DevStackSubsection: FC<DevStackSubsectionProps> = ({subtitle, items}) => {
+const DevStackSubsection: FC<Props> = ({subtitle, items}) => {
   return (
     <section className={classes.devStackSubsection}>
       <h3 className={classes.subtitle}>-{subtitle}-</h3>

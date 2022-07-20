@@ -3,6 +3,8 @@
 @blue: #001529;
 @white: #fff;
 @purple: #5d44a9;
+@skyblue: #1890ff;
+@red: #ff4d4f;
 @border: 3px solid @blue;
 
 .item {
@@ -15,14 +17,17 @@
   .head {
     height: 60px;
     width: 300px;
-    padding-left: 20px;
+    max-width: 300px;
+    padding: 0 20px;
     border: @border;
+    border-bottom: none;
     border-radius: 10px 10px 0 0;
     font-size: 1.2rem;
-    display: table-cell;
     background-color: @purple;
     color: @white;
+    display: table-cell;
     vertical-align: middle;
+    .textOverflow(); 
   }
 
   .body {
@@ -35,31 +40,39 @@
       border-right: @border;
       p {
         margin: 0 0 5px;
+        .textOverflow();
       }
     }
     
     .actions {
       height: 50px;
-      border: @border;
       .flex();
 
       .action {
         width: 25%;
-        height: 60%;
+        height: 100%;
+        border: @border;
+        border-top-width: 2px;
+        border-radius: 0;
         color: @blue;
-
         .flex();
-        
+
+        &:not(:first-child) {
+          border-left-width: 1px;
+        }
+
         &:not(:last-child) {
-          border-right: 2px solid @blue;
+          border-right: 0;
         }
 
         &:hover:not(:last-child) {
-          color: @purple;
+          color: @white;
+          background-color: @skyblue;
         }
 
         &:hover:last-child {
-          color: #f00;
+          color: @white;
+          background-color: @red;
         }
 
         svg {

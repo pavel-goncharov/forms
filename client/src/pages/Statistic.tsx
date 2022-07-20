@@ -1,19 +1,20 @@
 import {FC} from 'react';
 import classes from '../styles/statistic/Statistic.module.less';
 import Header from '../components/Header';
-import StatisticCollapse from '../components/statistic/StatisticCollapse';
+import ResultStatistic from '../components/statistic/ResultStatistic';
 import Filter from '../components/statistic/Filter';
-import { HeaderModes } from '../utils/constants';
-import { useParams } from 'react-router-dom';
+import {FormModes} from '../constants/layout';
+import {useParams} from 'react-router-dom';
 
 const Statistic: FC = () => {
-  const params = useParams();
-  const formId = Number(params.id);
+  const {id} = useParams();
+  const formId = Number(id);
+
   return (
     <div className={classes.statistic}>
-      <Header mode={HeaderModes.STATISTIC} formId={formId}/>
+      <Header mode={FormModes.STATISTIC} formId={formId!}/>
       <Filter formId={formId}/>
-      <StatisticCollapse formId={formId}/>
+      <ResultStatistic/>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 @import '../mixins.less';
 
 .answer {
+  font-size: 1.2rem;
   .answerBriefly {
     .flex(@justify: flex-start);
     .marker {
@@ -30,15 +31,6 @@
         bottom: 4px;
       }
     }  
-  }
-  .buttons {
-    .flex(@justify: flex-start);
-    width: calc(100% - 110px);
-    margin-left: 50px;
-    padding-bottom: 8px;
-    button + button {
-      margin-left: 10px;
-    } 
   }
   .answerComplete {
     width: calc(100% - 110px);

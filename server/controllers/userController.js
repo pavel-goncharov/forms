@@ -20,6 +20,10 @@ class UserController {
       return res.status(409).json({message: 'User with such email already exists'});
     }
 
+    if(password.length < 8) {
+      return res.status(400).json({message: 'Not strong password'});
+    }
+
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUserData = {nickname, email, password: hashedPassword};

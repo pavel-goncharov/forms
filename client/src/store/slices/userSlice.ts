@@ -1,6 +1,6 @@
-import {IUser} from "../../models/user";
-import {createSlice} from "@reduxjs/toolkit";
-import {SliceNames} from "../../utils/constants";
+import {IUser} from '../../types/user';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {SliceNames} from '../../constants/slices';
 
 interface UserState {
   isAuth: boolean;
@@ -16,12 +16,12 @@ const userSlice = createSlice({
   name: SliceNames.USER,
   initialState,
   reducers: {
-    setAuth(state, action) {
-      state.isAuth = action.payload; 
-    },
-    setUser(state, action) {
+    setUser(state, action: PayloadAction<IUser | null>) {
       state.user = action.payload;
     },
+    setAuth(state, action: PayloadAction<boolean>) {
+      state.isAuth = action.payload; 
+    }
   }, 
 });
 

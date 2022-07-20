@@ -1,13 +1,14 @@
-import { createSlice, PayloadAction} from "@reduxjs/toolkit";
-import { IFilterQuestion, IFilterUser, IQuestionStatistic } from "../../models/statistic";
-import { SliceNames } from "../../utils/constants";
-
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {IFilterItem, IQuestionStatistic } from '../../types/statistic';
+import {SliceNames} from '../../constants/slices';
 
 interface StatisticState {
   statisticQuestions: IQuestionStatistic[],
-  selectedQuestions: IFilterQuestion[];
-  selectedUsers: IFilterUser[];
+  selectedQuestions: IFilterItem[];
+  selectedUsers: IFilterItem[];
   isPerCent: boolean;
+  isShowCompleteAnswer: boolean;
+  isShowUsers: boolean;
 }
 
 const initialState: StatisticState = {
@@ -15,6 +16,8 @@ const initialState: StatisticState = {
   selectedQuestions: [],
   selectedUsers: [],
   isPerCent: true,
+  isShowCompleteAnswer: false,
+  isShowUsers: false,
 }
 
 const statisticSlice = createSlice({
@@ -24,19 +27,13 @@ const statisticSlice = createSlice({
     setStatisticQuestions(state, action: PayloadAction<IQuestionStatistic[]>) {
       state.statisticQuestions = action.payload;
     },
-    initialSetQuestions(state, action: PayloadAction<IFilterQuestion[]>) {
-      state.selectedQuestions = action.payload;
-    },
-    addSelectedQuestion(state, action: PayloadAction<IFilterQuestion>) {
+    addSelectedQuestion(state, action: PayloadAction<IFilterItem>) {
       state.selectedQuestions.push(action.payload);
     },
     deleteSelectedQuestion(state, action: PayloadAction<number>) {
       state.selectedQuestions = state.selectedQuestions.filter(question => question.id !== action.payload);
     },
-    initialSetUsers(state, action: PayloadAction<IFilterUser[]>) {
-      state.selectedUsers = action.payload;
-    },
-    addSelectedUser(state, action: PayloadAction<IFilterUser>) {
+    addSelectedUser(state, action: PayloadAction<IFilterItem>) {
       state.selectedUsers.push(action.payload);
     },
     deleteSelectedUser(state, action: PayloadAction<number>) {
@@ -44,6 +41,12 @@ const statisticSlice = createSlice({
     },
     changeIsPerCent(state) {
       state.isPerCent = !state.isPerCent; 
+    },
+    changeIsShowCompleteAnswer(state) {
+      state.isShowCompleteAnswer = !state.isShowCompleteAnswer; 
+    },
+    changeIsShowUsers(state) {
+      state.isShowUsers = !state.isShowUsers;
     }
   },
 });

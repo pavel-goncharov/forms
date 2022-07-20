@@ -1,12 +1,12 @@
 import {FC} from 'react';
-import {IItem} from '../../models/landing';
+import {IItem} from '../../types/landing';
 import classes from '../../styles/landing/SectionItem.module.less';
 
-interface SectionItemProps {
+interface Props {
   item: IItem; 
 }
 
-const SectionItem: FC<SectionItemProps> = ({item}) => {
+const SectionItem: FC<Props> = ({item}) => {
   return (
     item.imgSrc ?
     <article className={classes.item}>

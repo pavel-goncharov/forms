@@ -1,0 +1,80 @@
+@import '../mixins.less';
+
+.errorEdit {
+  border-bottom: 3px solid #b00000;
+  margin: 0 30px;
+  background-color: #ffffff;
+
+  animation: blink 1s;
+  animation-iteration-count: 3;
+
+  p {
+    margin: 0px;
+  }
+
+  .titles {
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    background-color: #b00000;
+    color: #ffffff;
+    .flex(@justify: space-between, @align: flex-start);
+    .title {
+      font-weight: bold;
+    }
+    .closeError {
+      font-size: 1.2rem;
+      position: relative;
+      top: 8px;
+      &:hover {
+        color: #ff6262;
+      }
+    }
+  }
+
+  .info {
+    .infoItem {
+      padding: 12px 20px;
+      &:not(:last-child) {
+        border-bottom: 2px dashed #b00000;
+      }
+      .infoTitle {
+        .flex(@justify: flex-start, @align: flex-start); 
+        .icon {
+          font-size: 23px;
+          color: #b00000;
+          position: relative;
+          top: 4px;
+        }
+        .iconTitle {
+          margin-left: 10px;
+          font-size: 1.2rem;
+        }
+      }
+      .errorTitle {
+        margin-left: 33px;
+        font-size: 1.2rem;
+      }
+      .errorItem {
+        margin-left: 43px;
+        font-size: 1.1rem;
+        .flex(@justify: flex-start); 
+        .errorItemMarker {
+          position: relative;
+          top: 2px;
+          font-size: 1rem;
+          margin-right: 10px;
+          color: #b00000;
+        }
+      }
+    }
+  }
+
+  & + * {
+    margin: 20px 0; 
+  }
+}
+
+@keyframes blink {
+  50%
+  {background-color: #ffd8d8;}
+}

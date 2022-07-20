@@ -1,66 +1,49 @@
 import {Button, Collapse} from 'antd';
-import {FC, useEffect} from 'react';
-import statisticApi from '../../api/extended/statisticApi';
+import {FC} from 'react';
 import {useActions} from '../../hooks/useActions';
-import {FilterCollapsePanel, FilterParts} from '../../utils/constants';
+import {BtnTitles, CollapseHeaders, CollapseKeys, FilterParts} from '../../constants/layout';
 import FilterPart from './FilterPart';
 import {SearchOutlined} from '@ant-design/icons';
 import {useAppSelector} from '../../hooks/useAppSelector';
-import {calcStatisticArg, IFilterQuestion, IFilterUser} from '../../models/statistic';
+import {IArgCalcStatistic} from '../../types/statistic';
+import classes from '../../styles/statistic/Filter.module.less';
+import {getFilterFormatForServer} from '../../utils/statistic';
+import {useCalcStatisticMutation, useFetchFilterQuestionsQuery, useFetchFilterUsersQuery} from '../../api/endPoints/statistic';
 
-
-interface FilterProps {
+interface Props {
   formId: number;
 }
 
-const Filter: FC<FilterProps> = ({formId}) => {
-  const {data: filterQuestions} = statisticApi.useFetchFilterQuestionsQuery(formId);  
-  const {data: filterUsers} = statisticApi.useFetchFilterUsersQuery(formId);
-  const [calcStatistic] = statisticApi.useCalcStatisticMutation();
+const Filter: FC<Props> = ({formId}) => {
+  const {data: filterQuestions} = useFetchFilterQuestionsQuery(formId);  
+  const {data: filterUsers} = useFetchFilterUsersQuery(formId);
+  const [calcStatistic] = useCalcStatisticMutation();
 
   const selectedQuestions = useAppSelector(state => state.statistic.selectedQuestions);
   const selectedUsers = useAppSelector(state => state.statistic.selectedUsers);
-
   const {setStatisticQuestions} = useActions();
 
-  // ----------------------------------------------------------------------------------------
-  useEffect(() => {
-    if(selectedQuestions.length && selectedUsers.length) searchStatistic();
-  }, []);
-
-  async function searchStatistic() {
-    console.log(selectedQuestions, selectedUsers);
+  async function searchStatistic(): Promise<void> {  
     const filter = getFilterFormatForServer(selectedQuestions, selectedUsers);
-    const argReq: calcStatisticArg = {id: formId, filter};
+    const argReq: IArgCalcStatistic = {id: formId, filter};
     const statisticQuestions = await calcStatistic(argReq).unwrap();
     setStatisticQuestions(statisticQuestions);
   }
   
-  function getFilterFormatForServer(filterQuestions: IFilterQuestion[], filterUsers: IFilterUser[]) {
-    const selectedQuestions = getArrayId(filterQuestions);
-    const selectedUsers = getArrayId(filterUsers);
-    const filter = {selectedQuestions, selectedUsers};
-    return filter;
-  } 
-
-  function getArrayId(objArr: IFilterQuestion[] | IFilterUser[]): number[] {
-    return objArr.map(obj => obj.id);
-  } 
   return (
-    <Collapse defaultActiveKey={FilterCollapsePanel.key}>
+    <Collapse defaultActiveKey={CollapseKeys.FILTER}>
       <Collapse.Panel
-        extra={
-          <div onClick={e => e.stopPropagation()}>
-            <Button onClick={() => searchStatistic()}>
-              <SearchOutlined/>
-            </Button>
-          </div>
-        } 
-        header={FilterCollapsePanel.header} 
-        key={FilterCollapsePanel.key}
+        header={CollapseHeaders.FILTER} 
+        key={CollapseKeys.FILTER}
       >
         <FilterPart title={FilterParts.QUESTIONS} filterQuestions={filterQuestions}/>
-        <FilterPart title={FilterParts.USERS} filterUsers={filterUsers}/>
+        <FilterPart title={FilterParts.USERS} filterUsers={filterUsers}/>       
+        <Button onClick={searchStatistic} className={classes.searchBtn}>
+          <span>
+            <SearchOutlined/>
+            <span className={classes.textSearchBtn}>{BtnTitles.SEARCH}</span>
+          </span>
+        </Button>
       </Collapse.Panel>
     </Collapse>
   );

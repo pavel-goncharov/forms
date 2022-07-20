@@ -1,46 +1,44 @@
 import {FC, useState} from 'react';
-import {Paths} from '../routes';
-import {loginMode, signUpMode} from '../utils/layoutData/auth';
+import {BtnTypes, FormItemLabels, LARGE, SUBMIT, ValidateStatuses, VERTICAL} from '../constants/layout';
+import {loginMode, signUpMode} from '../static/auth';
 import {Button, Form, Input, message} from 'antd';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {IAuthMode, IJwtDecode, ILoginError, ValidateErrorTitles, ValidateHelpers, ValidateStatusCodes, ValidateStatuses} from '../models/auth';
+import {IAuthMode, IAuthError, ValidateErrorTitles, ValidateHelpers, ValidateStatusCodes} from '../types/auth';
 import {useActions} from '../hooks/useActions';
 import classes from '../styles/auth/Auth.module.less';
-import userApi from '../api/extended/userApi';
+import {RoutePaths} from '../constants/routes';
+import {useGetMeMutation, useSignUpMutation, useLoginMutation} from '../api/endPoints/auth';
 
 const Auth: FC = () => {
-  const [login] = userApi.useLoginMutation();
-  const [signUp] = userApi.useSignUpMutation();
-  const [getMe] = userApi.useGetMeMutation();
+  const [login] = useLoginMutation();
+  const [signUp] = useSignUpMutation();
+  const [getMe] = useGetMeMutation();
   
   const {setAuth, setUser} = useActions();
+
+  const navigate = useNavigate();
+  const location = useLocation();
   
-  // pavelgoncharov@gmail.com
-  // pavel123
   const [errorTitle, setErrorTitle] = useState<string>('');
 
   const [nickname, setNickname] = useState<string>('');
   const [statusNickname, setStatusNickname] = useState<ValidateStatuses>(ValidateStatuses.VALIDATING);
   const [helpNickname, setHelpNickname] = useState<ValidateHelpers>(ValidateHelpers.DEFAULT);
 
-  const [email, setEmail] = useState<string>('pavelgoncharov@gmail.com');
+  const [email, setEmail] = useState<string>('');
   const [statusEmail, setStatusEmail] = useState<ValidateStatuses>(ValidateStatuses.VALIDATING);
   const [helpEmail, setHelpEmail] = useState<ValidateHelpers>(ValidateHelpers.DEFAULT);
   
-  const [password, setPassword] = useState<string>('pavel123');
+  const [password, setPassword] = useState<string>('');
   const [statusPassword, setStatusPassword] = useState<ValidateStatuses>(ValidateStatuses.VALIDATING);
   const [helpPassword, setHelpPassword] = useState<ValidateHelpers>(ValidateHelpers.DEFAULT);
-  
-  
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  async function signIn() {
+    
+  async function signIn(): Promise<void> {
     if(isLogin) logIn();
     else register();
   }
 
-  async function register() {
+  async function register(): Promise<void> {
     try {
       const reqBody = {nickname, email, password};
       const res = await signUp(reqBody).unwrap();
@@ -48,12 +46,12 @@ const Auth: FC = () => {
         message.info(res.success);
         logIn(true);
       }
-    } catch (err: ILoginError | any) {
+    } catch (err: IAuthError | any) {
       handlerSignUpErrorValidate(err);
     }
   }
 
-  async function logIn(isFromRegister: boolean = false) {
+  async function logIn(isFromRegister: boolean = false): Promise<void> {
     try {
       const reqBody = {email, password};
       const res = await login(reqBody).unwrap();
@@ -61,20 +59,23 @@ const Auth: FC = () => {
         const user = await getMe().unwrap();
         setUser(user);
         setAuth(true);
-        navigate(Paths.CATALOG);
+        navigate(RoutePaths.CATALOG);
         if(!isFromRegister) message.info(`Welcome back, ${user.nickname}`);
       }
-    } catch (err: ILoginError | any) {
-      // handlerLoginErrorValidate(err);
-      console.log(err);
+    } catch (err: IAuthError | any) {
+      handlerLoginErrorValidate(err);
     }
   }
 
-  function handlerSignUpErrorValidate(err: ILoginError) {
+  function handlerSignUpErrorValidate(err: IAuthError): void {
     handlerValidateAllClear();
     switch(err.status) {
       case ValidateStatusCodes.CODE400:
-        setModeAuthRequired(err);
+        if(err.data.message === ValidateErrorTitles.SIGN_UP_REQUIRED) {
+          setModeAuthRequired(err);
+        } else {
+          setModeSingUpNotPassword(err);
+        }
         break;
       case ValidateStatusCodes.CODE409:
         if(err.data.message === ValidateErrorTitles.NICKNAME_EXISTS) {
@@ -89,7 +90,7 @@ const Auth: FC = () => {
     }
   }
 
-  function handlerLoginErrorValidate(err: ILoginError) {
+  function handlerLoginErrorValidate(err: IAuthError): void {
     handlerValidateAllClear();
     switch(err.status) {
       case ValidateStatusCodes.CODE400:
@@ -105,7 +106,7 @@ const Auth: FC = () => {
     }
   }
 
-  function handlerValidateAllClear() {
+  function handlerValidateAllClear(): void {
     setErrorTitle('');
     if(!isLogin) {
       setHelpNickname(ValidateHelpers.DEFAULT);
@@ -117,7 +118,7 @@ const Auth: FC = () => {
     setStatusPassword(ValidateStatuses.VALIDATING);
   }
 
-  function setModeAuthRequired(err: ILoginError) {
+  function setModeAuthRequired(err: IAuthError): void {
     setErrorTitle(err.data.message);
     if(!isLogin && !nickname) {
       setStatusNickname(ValidateStatuses.ERROR);
@@ -133,47 +134,52 @@ const Auth: FC = () => {
     }
   }
 
-  function setModeSignUpNicknameExists(err: ILoginError) {
+  function setModeSignUpNicknameExists(err: IAuthError): void {
     setErrorTitle(err.data.message);
     setStatusNickname(ValidateStatuses.WARNING);
     setHelpNickname(ValidateHelpers.SET_ANOTHER_NICKNAME);
   }
 
-  function setModeSignUpEmailExists(err: ILoginError) {
+  function setModeSignUpEmailExists(err: IAuthError): void {
     setErrorTitle(err.data.message);
     setStatusEmail(ValidateStatuses.ERROR);
     setHelpEmail(ValidateHelpers.SET_ANOTHER_EMAIL);
   }
 
-  function setModeSignUpServerError(err: ILoginError) {
+  function setModeSingUpNotPassword(err: IAuthError): void {
+    setErrorTitle(err.data.message);
+    setStatusPassword(ValidateStatuses.ERROR);
+    setHelpPassword(ValidateHelpers.SET_ANOTHER_PASSWORD);
+  }
+
+  function setModeSignUpServerError(err: IAuthError): void {
     console.log(err.data.message);
     setErrorTitle(ValidateErrorTitles.SERVER_ERROR);
   }
 
-  function setModeLoginNoUser(err: ILoginError) {
+  function setModeLoginNoUser(err: IAuthError): void {
     setErrorTitle(err.data.message);
     setStatusEmail(ValidateStatuses.ERROR);
     setHelpEmail(ValidateHelpers.CHECK_EMAIL);
   }
   
-  function setModeLoginNotMatchPasswords(err: ILoginError) {
+  function setModeLoginNotMatchPasswords(err: IAuthError): void {
     setErrorTitle(err.data.message);
     setStatusPassword(ValidateStatuses.ERROR);
     setHelpPassword(ValidateHelpers.CHECK_PASSWORD);
   }
 
-  const isLogin: boolean = (location.pathname === Paths.LOGIN);
+  const isLogin: boolean = (location.pathname === RoutePaths.LOGIN);
   const authPage: IAuthMode = isLogin ? loginMode : signUpMode;
 
   return (
     <div className={classes.auth}>
-      <Form onFinish={signIn} className={classes.form} layout='vertical' size='large'>
+      <Form onFinish={signIn} className={classes.form} layout={VERTICAL} size={LARGE}>
         <h2 className={classes.title}>{authPage.title}</h2>
         {errorTitle && <div className={classes.errorTitle}>{errorTitle}</div>}
         {!isLogin &&
           <Form.Item 
-            label="Nickname"
-            name="nickname"
+            label={FormItemLabels.NICKNAME}
             validateStatus={statusNickname}
             help={helpNickname}
             className={classes.formItemInput}
@@ -182,8 +188,7 @@ const Auth: FC = () => {
           </Form.Item>
         }
         <Form.Item
-          label="Email"
-          name="email"
+          label={FormItemLabels.EMAIL}
           validateStatus={statusEmail}
           help={helpEmail}
           className={classes.formItemInput}
@@ -191,8 +196,7 @@ const Auth: FC = () => {
           <Input value={email} onChange={e => setEmail(e.target.value)}/>
         </Form.Item>
         <Form.Item 
-          label="Password"
-          name="password"
+          label={FormItemLabels.PASSWORD}
           validateStatus={statusPassword}
           className={classes.formItemInput}
           help={helpPassword}
@@ -204,7 +208,7 @@ const Auth: FC = () => {
           <NavLink to={authPage.redirect.path}>{authPage.redirect.titlePath}</NavLink>
         </div>
         <Form.Item className={classes.formItemBtn}>
-          <Button type="primary" htmlType="submit" size='large' className={classes.btn}>
+          <Button type={BtnTypes.PRIMARY} htmlType={SUBMIT} size={LARGE} className={classes.btn}>
             {authPage.btnTitle}
           </Button>
         </Form.Item>

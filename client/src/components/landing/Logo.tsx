@@ -1,12 +1,12 @@
 import {FC} from 'react';
-import {ILogoSection} from '../../models/landing';
+import {ILogoSection} from '../../types/landing';
 import classes from '../../styles/landing/Logo.module.less';
 
-interface LogoProps {
+interface Props {
   logo: ILogoSection; 
 }
 
-const Logo: FC<LogoProps> = ({logo}) => {
+const Logo: FC<Props> = ({logo}) => {
   return (
     <section className={classes.logo}>
       <img src={logo.imgSrc} alt={logo.imgAlt} className={classes.img}/>

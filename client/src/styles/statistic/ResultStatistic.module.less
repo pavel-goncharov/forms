@@ -1,0 +1,19 @@
+@import '../mixins.less';
+
+.buttons {
+  .flex(@justify: flex-start);
+  margin-left: 30px;
+  padding: 8px 0px;
+  button + button {
+    margin-left: 15px;
+  } 
+}
+
+.empty {
+  padding: 15px;
+}
+
+.spin {
+  padding: 15px;
+  .flex();
+}

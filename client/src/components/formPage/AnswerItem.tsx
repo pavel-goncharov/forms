@@ -1,20 +1,22 @@
 import {FC, useState} from 'react';
 import {Button, Checkbox, Popconfirm} from 'antd';
-import {IAnswerFormPage} from '../../models/form';
+import {IAnswer} from '../../types/form';
 import classes from '../../styles/formPage/AnswerItem.module.less';
 import {DeleteOutlined} from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
-import { useActions } from '../../hooks/useActions';
+import {useActions} from '../../hooks/useActions';
+import {popConfirmArgs, popConfirmPlacements, textAreaRows} from '../../constants/layout';
+import {getTitlePopConfirmDeleteAnswer} from '../../utils/messages';
 
-interface AnswerItemProps {
+interface Props {
   questionId: number;
-  answer: IAnswerFormPage;
+  answer: IAnswer;
   remove: (id: number) => void;
   isEditMode: boolean;
   index: number;
 }
 
-const AnswerItem: FC<AnswerItemProps> = ({questionId, answer, remove, isEditMode, index}) => {
+const AnswerItem: FC<Props> = ({questionId, answer, remove, isEditMode, index}) => {
   const {setIsCheckedAnswer, deleteAnswer, updateAnswer} = useActions();
   
   const [isChecked, setIsChecked] = useState<boolean>(answer.isChecked!);
@@ -23,7 +25,9 @@ const AnswerItem: FC<AnswerItemProps> = ({questionId, answer, remove, isEditMode
   const classItem = isEditMode ? classes.answerItemEdit : classes.answerItemPlay;
   const classText = isChecked ? classes.answerTextChecked : classes.answerTextDefault;
 
-  function changeIsCheckedAnswer(newValue: boolean) {
+  const titlePopConfirmDeleteAnswer: string = getTitlePopConfirmDeleteAnswer(index);
+
+  function changeIsCheckedAnswer(newValue: boolean): void {
     setIsChecked(newValue);
     const dataAnswer = {
       questionId,
@@ -32,7 +36,7 @@ const AnswerItem: FC<AnswerItemProps> = ({questionId, answer, remove, isEditMode
     setIsCheckedAnswer(dataAnswer);
   }
 
-  function handlerRemove() {
+  function handlerRemove(): void {
     const argAction = {
       questionId,
       id: answer.id
@@ -41,7 +45,7 @@ const AnswerItem: FC<AnswerItemProps> = ({questionId, answer, remove, isEditMode
     remove(answer.id)
   }
 
-  function handlerUpdate(newValue: string) {
+  function handlerUpdate(newValue: string): void {
     setTitle(newValue);
     const updatedAnswer = {
       questionId,
@@ -60,14 +64,14 @@ const AnswerItem: FC<AnswerItemProps> = ({questionId, answer, remove, isEditMode
             value={title}
             onChange={e => handlerUpdate(e.target.value)} 
             placeholder={`Answer ${index}`}
-            rows={1}
+            rows={textAreaRows.ANSWER}
           />
           <Popconfirm
-            placement="left"
-            title={`Are you sure to delete the answer ${index}?`}
+            placement={popConfirmPlacements.LEFT}
+            title={titlePopConfirmDeleteAnswer}
             onConfirm={handlerRemove}
-            okText="Yes"
-            cancelText="No"
+            okText={popConfirmArgs.okText}
+            cancelText={popConfirmArgs.cancelText}
           >
             <Button className={classes.btnDelete}><DeleteOutlined/></Button>
           </Popconfirm>
