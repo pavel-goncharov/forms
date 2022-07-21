@@ -10,6 +10,7 @@ import {getIsPassedWarning, getNoQuestionsWarning, getTitlePopConfirmDeleteForm}
 import {RoutePaths} from '../../constants/routes';
 import {useCheckCorrectPassFormQuery} from '../../api/endPoints/play';
 import {useCheckIsAuthorFormQuery, useDeleteFormMutation} from '../../api/endPoints/form';
+import {useGoToFormPage} from '../../hooks/useGoToFormPage';
 
 interface Props {
   form: ICatalogItem,
@@ -20,11 +21,11 @@ const CatalogItem: FC<Props> = ({form}) => {
   const {data: isAuthor} = useCheckIsAuthorFormQuery(form.id);
   const [deleteItem] = useDeleteFormMutation();
   
-  const navigate = useNavigate();
+  const goToFormPage = useGoToFormPage(form.id);
 
   const titlePopConfirmDelete: string = getTitlePopConfirmDeleteForm(form.title);
 
-  async function toPlay(): Promise<void> {
+  function toPlay(): void {
     switch(playRes?.message) {
       case PlayFormCheckMessages.NO_QUESTIONS:
         const noQuestionsWarning = getNoQuestionsWarning(form.title);
@@ -35,17 +36,17 @@ const CatalogItem: FC<Props> = ({form}) => {
         message.warning(isPassedWarning);
         break;
       case PlayFormCheckMessages.CORRECT:
-        toFormPage(RoutePaths.PLAY);
+        goToFormPage(RoutePaths.PLAY);
         break;
     }
   }
 
   function toEdit(): void {
-    toFormPage(RoutePaths.EDIT);
+    goToFormPage(RoutePaths.EDIT);
   }
 
   function toStatistic(): void {
-    toFormPage(RoutePaths.STATISTIC);
+    goToFormPage(RoutePaths.STATISTIC);
   }
 
   async function removeForm(): Promise<void> {
@@ -53,11 +54,6 @@ const CatalogItem: FC<Props> = ({form}) => {
     message.success(feedback);
   }
 
-  function toFormPage(routePath: RoutePaths): void {
-    const formPagePath = generatePath(routePath, {id: form.id.toString()});
-    navigate(formPagePath);
-  }
-  
   return (
     <div className={classes.item}>
       <div className={classes.head}>

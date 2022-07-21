@@ -12,6 +12,7 @@ import {useFetchPassagesQuery} from '../api/endPoints/statistic';
 import {useCheckCorrectPassFormQuery} from '../api/endPoints/play';
 import { PlayFormCheckMessages } from '../types/play';
 import { getIsPassedWarning, getNoQuestionsWarning } from '../utils/messages';
+import { useGoToFormPage } from '../hooks/useGoToFormPage';
 
 interface Props {
   mode: FormModes,
@@ -26,9 +27,10 @@ const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
   const {data: formTitle} = useFetchFormTitleQuery(formId);
   const {data: numberPassages} = useFetchPassagesQuery(formId);
 
-  const [modalInfoVisible, setModalInfoVisible] = useState<boolean>(false);
-
+  const goToFormPage = useGoToFormPage(formId);
   const navigate = useNavigate();
+
+  const [modalInfoVisible, setModalInfoVisible] = useState<boolean>(false);
 
   const modalInfo: IModal = {
     visible: modalInfoVisible,
@@ -94,11 +96,6 @@ const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
     }
   }
 
-  function toFormPage(routePath: RoutePaths): void {
-    const formPagePath = generatePath(routePath, {id: formId.toString()});
-    navigate(formPagePath);
-  }
-
   function toPlay(): void {
     switch(playRes?.message) {
       case PlayFormCheckMessages.NO_QUESTIONS:
@@ -110,14 +107,14 @@ const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
         message.warning(isPassedWarning);
         break;
       case PlayFormCheckMessages.CORRECT:
-        toFormPage(RoutePaths.PLAY);
+        goToFormPage(RoutePaths.PLAY);
         break;
     }
   }
 
   function toEdit(): void {
     if(isAuthor) {
-      toFormPage(RoutePaths.EDIT);
+      goToFormPage(RoutePaths.EDIT);
     } else {
       message.warning(AUTHOR_WARNING);
     }
@@ -125,7 +122,7 @@ const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
 
   function toStatistic(): void {
     if(isAuthor) {
-      toFormPage(RoutePaths.STATISTIC);
+      goToFormPage(RoutePaths.STATISTIC);
     } else {
       message.warning(AUTHOR_WARNING);
     }
