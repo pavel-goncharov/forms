@@ -1,12 +1,12 @@
 import {FC} from 'react';
 import {EditOutlined, PlayCircleOutlined, BarChartOutlined, DeleteOutlined} from '@ant-design/icons';
 import {ICatalogItem} from '../../types/form';
-import {AUTHOR_WARNING, BtnTypes, FormModes, popConfirmArgs} from '../../constants/layout';
+import {BtnTypes, FormModes, popConfirmArgs} from '../../constants/layout';
 import classes from '../../styles/catalog/CatalogItem.module.less';
 import {Button, message, Popconfirm} from 'antd';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {PlayFormCheckMessages} from '../../types/play';
-import {getDeleteWarning, getIsPassedWarning, getNoQuestionsWarning, getTitlePopConfirmDeleteForm} from '../../utils/messages';
+import {getIsPassedWarning, getNoQuestionsWarning, getTitlePopConfirmDeleteForm} from '../../utils/messages';
 import {RoutePaths} from '../../constants/routes';
 import {useCheckCorrectPassFormQuery} from '../../api/endPoints/play';
 import {useCheckIsAuthorFormQuery, useDeleteFormMutation} from '../../api/endPoints/form';
@@ -21,6 +21,8 @@ const CatalogItem: FC<Props> = ({form}) => {
   const [deleteItem] = useDeleteFormMutation();
   
   const navigate = useNavigate();
+
+  const titlePopConfirmDelete: string = getTitlePopConfirmDeleteForm(form.title);
 
   async function toPlay(): Promise<void> {
     switch(playRes?.message) {
@@ -38,28 +40,15 @@ const CatalogItem: FC<Props> = ({form}) => {
     }
   }
 
-  async function toEdit(): Promise<void> {
-    if(isAuthor) {
-      toFormPage(RoutePaths.EDIT);
-    } else {
-      message.warning(AUTHOR_WARNING);
-    }
+  function toEdit(): void {
+    toFormPage(RoutePaths.EDIT);
   }
 
-  async function toStatistic(): Promise<void> {
-    if(isAuthor) {
-      toFormPage(RoutePaths.STATISTIC);
-    } else {
-      message.warning(AUTHOR_WARNING);
-    }
+  function toStatistic(): void {
+    toFormPage(RoutePaths.STATISTIC);
   }
 
   async function removeForm(): Promise<void> {
-    if(!isAuthor) {
-      const deleteWarning = getDeleteWarning(form.author, form.title);
-      message.warning(deleteWarning);
-      return;
-    }
     const feedback = await deleteItem(form.id).unwrap();
     message.success(feedback);
   }
@@ -68,8 +57,6 @@ const CatalogItem: FC<Props> = ({form}) => {
     const formPagePath = generatePath(routePath, {id: form.id.toString()});
     navigate(formPagePath);
   }
-
-  const titlePopConfirmDelete: string = getTitlePopConfirmDeleteForm(form.title);
   
   return (
     <div className={classes.item}>
@@ -83,21 +70,23 @@ const CatalogItem: FC<Props> = ({form}) => {
           <p>Author: {form.author}</p>
         </div>
         <div className={classes.actions}>
-          <Button 
+          <Button
             onClick={toPlay}
             className={classes.action}
             type={BtnTypes.LINK}
           >
             <PlayCircleOutlined key={FormModes.PLAY}/>
           </Button>
-          <Button 
+          <Button
+            disabled={!isAuthor} 
             onClick={toEdit}
             className={classes.action}
             type={BtnTypes.LINK}
           >
             <EditOutlined key={FormModes.EDIT}/>
           </Button>
-          <Button 
+          <Button
+            disabled={!isAuthor} 
             onClick={toStatistic}
             className={classes.action}
             type={BtnTypes.LINK}
@@ -105,6 +94,7 @@ const CatalogItem: FC<Props> = ({form}) => {
             <BarChartOutlined key={FormModes.STATISTIC}/>
           </Button>
           <Button 
+            disabled={!isAuthor} 
             className={classes.action}
             type={BtnTypes.LINK}
           >

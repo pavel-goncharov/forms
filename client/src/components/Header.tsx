@@ -1,14 +1,17 @@
-import {Button, PageHeader, Popconfirm, Tag} from 'antd';
+import {Button, message, PageHeader, Popconfirm, Tag} from 'antd';
 import {FC, useState} from 'react';
 import classes from '../styles/general/Header.module.less';
 import {InfoCircleOutlined, SaveOutlined, PlayCircleOutlined, SendOutlined, EditOutlined, UserOutlined, BarChartOutlined} from '@ant-design/icons';
 import ModalInfo from './edit/ModalInfo';
 import {IModal, ITagsAndExtra} from '../types/form';
-import {FormModes, BtnKeys, popConfirmPlacements, TITLE_IS_SEND_PASSAGE, popConfirmArgs} from '../constants/layout';
+import {FormModes, BtnKeys, popConfirmPlacements, TITLE_IS_SEND_PASSAGE, popConfirmArgs, AUTHOR_WARNING} from '../constants/layout';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {RoutePaths} from '../constants/routes';
-import {useFetchFormTitleQuery} from '../api/endPoints/form';
+import {useCheckIsAuthorFormQuery, useFetchFormTitleQuery} from '../api/endPoints/form';
 import {useFetchPassagesQuery} from '../api/endPoints/statistic';
+import {useCheckCorrectPassFormQuery} from '../api/endPoints/play';
+import { PlayFormCheckMessages } from '../types/play';
+import { getIsPassedWarning, getNoQuestionsWarning } from '../utils/messages';
 
 interface Props {
   mode: FormModes,
@@ -18,7 +21,9 @@ interface Props {
 }
 
 const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
-  const {data: titleForm} = useFetchFormTitleQuery(formId);
+  const {data: playRes} = useCheckCorrectPassFormQuery(formId);
+  const {data: isAuthor} = useCheckIsAuthorFormQuery(formId);
+  const {data: formTitle} = useFetchFormTitleQuery(formId);
   const {data: numberPassages} = useFetchPassagesQuery(formId);
 
   const [modalInfoVisible, setModalInfoVisible] = useState<boolean>(false);
@@ -95,15 +100,35 @@ const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
   }
 
   function toPlay(): void {
-    toFormPage(RoutePaths.PLAY);
+    switch(playRes?.message) {
+      case PlayFormCheckMessages.NO_QUESTIONS:
+        const noQuestionsWarning = getNoQuestionsWarning(formTitle!);
+        message.warning(noQuestionsWarning);
+        break;
+      case PlayFormCheckMessages.IS_PASSED:
+        const isPassedWarning = getIsPassedWarning(formTitle!);
+        message.warning(isPassedWarning);
+        break;
+      case PlayFormCheckMessages.CORRECT:
+        toFormPage(RoutePaths.PLAY);
+        break;
+    }
   }
 
   function toEdit(): void {
-    toFormPage(RoutePaths.EDIT);
+    if(isAuthor) {
+      toFormPage(RoutePaths.EDIT);
+    } else {
+      message.warning(AUTHOR_WARNING);
+    }
   }
 
   function toStatistic(): void {
-    toFormPage(RoutePaths.STATISTIC);
+    if(isAuthor) {
+      toFormPage(RoutePaths.STATISTIC);
+    } else {
+      message.warning(AUTHOR_WARNING);
+    }
   }
 
   return (
@@ -111,7 +136,7 @@ const Header: FC<Props> = ({mode, formId, sendPassage, saveQuestions}) => {
       <PageHeader
         onBack={() => navigate(RoutePaths.CATALOG)}
         tags = {tagsAndExtra.tags}
-        title={titleForm}
+        title={formTitle}
         extra={tagsAndExtra.extra}
         className={classes.pageHeader}
       />
