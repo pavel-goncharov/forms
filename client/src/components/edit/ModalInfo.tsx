@@ -1,6 +1,6 @@
 import {Button, Form, Input, message, Modal, Popconfirm} from 'antd';
 import {FC, useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {IModal} from '../../types/form';
 import {BtnTitles, FormItemLabels, ModalTitles, Placeholders, popConfirmArgs, popConfirmPlacements, TITLE_IS_REQUIRED, ValidateStatuses, VERTICAL} from '../../constants/layout';
 import classes from '../../styles/edit/ModalInfo.module.less';
@@ -8,14 +8,14 @@ import {getTitlePopConfirmDeleteForm} from '../../utils/messages';
 import {RoutePaths} from '../../constants/routes';
 import {useFetchInfoQuery, useUpdateInfoMutation} from '../../api/endPoints/edit';
 import {useDeleteFormMutation} from '../../api/endPoints/form';
+import {useGetFormId} from '../../hooks/useGetFormId';
 
 interface Props {
   modal: IModal;
 }
 
 const ModalInfo: FC<Props> = ({modal}) => {
-  const {id} = useParams();
-  const formId = Number(id);
+  const formId = useGetFormId();
 
   const {data: formData} = useFetchInfoQuery(formId);
   const [deleteItem] = useDeleteFormMutation();

@@ -1,6 +1,6 @@
 import {message, Spin} from 'antd';
 import {FC, useEffect} from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {PlayFormCheckMessages} from '../../types/play';
 import Play from '../../pages/Play';
 import {LARGE} from '../../constants/layout';
@@ -9,10 +9,10 @@ import classes from '../../styles/play/RouterPlay.module.less';
 import {RoutePaths} from '../../constants/routes';
 import {useCheckCorrectPassFormQuery} from '../../api/endPoints/play';
 import {useFetchFormTitleQuery} from '../../api/endPoints/form';
+import {useGetFormId} from '../../hooks/useGetFormId';
 
 const RoutePlay: FC = () => {
-  const {id} = useParams();
-  const formId = Number(id);
+  const formId = useGetFormId();
 
   const {data: playRes, isLoading} = useCheckCorrectPassFormQuery(formId);
   const {data: formTitle, isLoading: isLoadingTitle} = useFetchFormTitleQuery(formId);

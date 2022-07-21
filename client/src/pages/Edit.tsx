@@ -2,7 +2,6 @@ import {FC, useEffect, useState} from 'react';
 import Header from '../components/Header';
 import QuestionItem from '../components/formPage/QuestionItem';
 import classes from '../styles/formPage/FormPage.module.less';
-import {useParams} from 'react-router-dom';
 import {BtnTitles, FormModes} from '../constants/layout';
 import {useAppSelector} from '../hooks/useAppSelector';
 import {useActions} from '../hooks/useActions';
@@ -14,10 +13,10 @@ import {useCallbackPrompt} from '../hooks/useCallbackPrompt';
 import {checkValidateEditForm, getInfoErrorsEdit} from '../utils/edit';
 import {useFetchQuestionsQuery} from '../api/endPoints/form';
 import {useSaveChangesMutation} from '../api/endPoints/edit';
+import {useGetFormId} from '../hooks/useGetFormId';
 
 const Edit: FC = () => {
-  const {id} = useParams();
-  const formId = Number(id);
+  const formId = useGetFormId();
 
   const {data: formData} = useFetchQuestionsQuery(formId);
   const [saveTheChanges] = useSaveChangesMutation();

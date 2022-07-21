@@ -2,7 +2,6 @@ import {FC, useEffect, useState} from 'react';
 import Header from '../components/Header';
 import QuestionItem from '../components/formPage/QuestionItem';
 import classes from '../styles/formPage/FormPage.module.less';
-import {useParams} from 'react-router-dom';
 import {FormModes} from '../constants/layout';
 import {useAppSelector} from '../hooks/useAppSelector';
 import {useActions} from '../hooks/useActions';
@@ -15,11 +14,11 @@ import {useCallbackPrompt} from '../hooks/useCallbackPrompt';
 import ModalLeavePlay from '../components/play/ModalLeavePlay';
 import {useFetchQuestionsQuery} from '../api/endPoints/form';
 import {useCreatePassageMutation} from '../api/endPoints/play';
+import {useGetFormId} from '../hooks/useGetFormId';
 
 
 const Play: FC = () => {
-  const {id} = useParams();
-  const formId = Number(id);
+  const formId = useGetFormId();
 
   const {data: formData} = useFetchQuestionsQuery(formId);
   const [createPassage] = useCreatePassageMutation();

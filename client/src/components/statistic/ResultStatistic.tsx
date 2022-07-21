@@ -4,14 +4,13 @@ import QuestionStatistic from './QuestionStatistic';
 import {UserOutlined, PercentageOutlined} from '@ant-design/icons';
 import {useAppSelector} from '../../hooks/useAppSelector';
 import {useActions} from '../../hooks/useActions';
-import {useParams} from 'react-router-dom';
 import classes from '../../styles/statistic/ResultStatistic.module.less';
 import {CollapseHeaders, CollapseKeys, LARGE, SwitchContents} from '../../constants/layout';
 import {useFetchAllStatisticQuery} from '../../api/endPoints/statistic';
+import {useGetFormId} from '../../hooks/useGetFormId';
 
 const ResultStatistic: FC = () => {
-  const {id} = useParams();
-  const formId = Number(id);
+  const formId = useGetFormId();
 
   const {data: allStatisticQuestions, isLoading} = useFetchAllStatisticQuery(formId);
 

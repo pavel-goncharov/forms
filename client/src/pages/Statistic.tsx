@@ -4,12 +4,10 @@ import Header from '../components/Header';
 import ResultStatistic from '../components/statistic/ResultStatistic';
 import Filter from '../components/statistic/Filter';
 import {FormModes} from '../constants/layout';
-import {useParams} from 'react-router-dom';
+import {useGetFormId} from '../hooks/useGetFormId';
 
 const Statistic: FC = () => {
-  const {id} = useParams();
-  const formId = Number(id);
-
+  const formId = useGetFormId();
   return (
     <div className={classes.statistic}>
       <Header mode={FormModes.STATISTIC} formId={formId!}/>
