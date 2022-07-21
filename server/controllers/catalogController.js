@@ -5,7 +5,7 @@ class CatalogController {
     const {title, description} = req.body;
     const userId = req.user.id;
     const newForm = await Form.create({title, description, userId});
-    return res.json({success: `${newForm.title} created`});
+    return res.json(newForm.id);
   }
 
   async getAllCatalogItems(req, res) {

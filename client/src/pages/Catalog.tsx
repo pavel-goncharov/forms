@@ -9,10 +9,14 @@ import {Empty} from 'antd';
 import {ClearOutlined} from '@ant-design/icons';
 import {BtnTitles, LARGE, Placeholders} from '../constants/layout';
 import {useCreateCatalogItemMutation, useFetchCatalogItemsQuery} from '../api/endPoints/catalog';
+import {generatePath, useNavigate} from 'react-router-dom';
+import {RoutePaths} from '../constants/routes';
 
 const Catalog: FC = () => {
   const {data: items, isLoading} = useFetchCatalogItemsQuery();
-  const [createItem] = useCreateCatalogItemMutation(); 
+  const [createItem] = useCreateCatalogItemMutation();
+  
+  const navigate = useNavigate()
 
   const [catalogItems, setCataloItems] = useState<ICatalogItem[]>([]);
   const [formTitle, setFormTitle] = useState<string>('');
@@ -42,8 +46,10 @@ const Catalog: FC = () => {
   };
 
   async function createNewItem(newItemData: INewCatalogItemParams): Promise<void> {
-    await createItem(newItemData);
+    const formId = await createItem(newItemData).unwrap();
     setModalNewItemVisible(false);
+    const formEditPath = generatePath(RoutePaths.EDIT, {id: formId.toString()});
+    navigate(formEditPath);
   };
   
   return (
@@ -71,7 +77,6 @@ const Catalog: FC = () => {
         {!catalogItems?.length && isLoading &&
           <Spin size={LARGE}/>
         }
-        {}
       </div>
     </div>
   );
