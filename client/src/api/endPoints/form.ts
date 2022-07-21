@@ -21,7 +21,8 @@ const formEndPoints = appApi.injectEndpoints({
       providesTags: [apiTags.form]
     }),
     checkIsAuthorForm: build.query<boolean, number>({
-      query: (formId) => generatePath(FormUrls.AUTHOR, {id: formId.toString()})
+      query: (formId) => generatePath(FormUrls.AUTHOR, {id: formId.toString()}),
+      providesTags: [apiTags.user]
     })
   })
 });

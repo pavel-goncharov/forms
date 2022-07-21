@@ -2,7 +2,8 @@ export const credentials = 'include';
 export const apiReducerPath = 'appApi';
 
 export const apiTags = {
-  form: 'Form'
+  form: 'Form',
+  user: 'User'
 }
 
 export enum HttpMethods {
