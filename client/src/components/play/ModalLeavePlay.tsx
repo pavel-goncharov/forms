@@ -1,6 +1,7 @@
 import {Button, Modal} from 'antd';
 import {FC} from 'react';
 import {BtnTypes, BtnKeys, ModalTitles, BtnTitles} from '../../constants/layout';
+import {useActions} from '../../hooks/useActions';
 
 interface Props {
   show: boolean;
@@ -10,9 +11,16 @@ interface Props {
 }
 
 const ModalLeavePlay: FC<Props> = ({show, confirmNavigate, cancelNavigate, send}) => {
+  const {setFalseToIsModalLeftPlayWillBeShown} = useActions();
+
   async function sendResult(): Promise<void> {
     const isSendPassage = await send();
-    if(isSendPassage) confirmNavigate();
+    if(isSendPassage) leavePage();
+  }
+
+  function leavePage(): void {
+    setFalseToIsModalLeftPlayWillBeShown();
+    confirmNavigate();
   }
 
   return (
@@ -22,7 +30,7 @@ const ModalLeavePlay: FC<Props> = ({show, confirmNavigate, cancelNavigate, send}
       onCancel={cancelNavigate}
       footer={[
         <Button onClick={sendResult} type={BtnTypes.PRIMARY} key={BtnKeys.SEND}>{BtnTitles.SEND}</Button>,
-        <Button onClick={confirmNavigate} key={BtnKeys.LEAVE}>{BtnTitles.LEAVE_PAGE}</Button>
+        <Button onClick={leavePage} key={BtnKeys.LEAVE}>{BtnTitles.LEAVE_PAGE}</Button>
       ]}
     >
       <p>You are leaving this page without saving the result.</p>

@@ -25,7 +25,7 @@ const Edit: FC = () => {
   const isModalLeftWillBeShown = useAppSelector(state => state.edit.isModalLeftWillBeShown);
   const isErrorEdit = useAppSelector(state => state.edit.isErrorEdit);
   const questionsEdit = useAppSelector(state => state.edit.questions);
-  const {addQuestion, setEditQuestions, setInfoErrorsEdit, setIsErrorEdit, setFalseToIsModalLeftWillBeShown} = useActions();
+  const {addQuestion, setEditQuestions, setInfoErrorsEdit, setIsErrorEdit, setFalseToIsModalLeftEditWillBeShown: setFalseToIsModalLeftWillBeShown} = useActions();
   
   const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(isModalLeftWillBeShown);
   

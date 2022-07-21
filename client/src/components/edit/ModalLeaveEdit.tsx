@@ -1,6 +1,7 @@
 import {Button, Modal} from 'antd';
 import {FC} from 'react';
 import {BtnTitles, BtnTypes, BtnKeys, ModalTitles } from '../../constants/layout';
+import {useActions} from '../../hooks/useActions';
 
 interface Props {
   show: boolean;
@@ -10,9 +11,17 @@ interface Props {
 }
 
 const ModalLeaveEdit: FC<Props> = ({show, confirmNavigate, cancelNavigate, save}) => {
+
+  const {setFalseToIsModalLeftEditWillBeShown: setFalseToIsModalLeftWillBeShown} = useActions();
+
   async function saveForm(): Promise<void> {
     await save();
-    cancelNavigate();
+    leavePage();
+  }
+
+  function leavePage(): void {
+    setFalseToIsModalLeftWillBeShown();
+    confirmNavigate();
   }
   return (
     <Modal 
@@ -21,7 +30,7 @@ const ModalLeaveEdit: FC<Props> = ({show, confirmNavigate, cancelNavigate, save}
       onCancel={cancelNavigate}
       footer={[
         <Button onClick={saveForm} type={BtnTypes.PRIMARY} key={BtnKeys.SAVE}>{BtnTitles.SAVE}</Button>,
-        <Button onClick={confirmNavigate} key={BtnKeys.LEAVE}>{BtnTitles.LEAVE_PAGE}</Button>
+        <Button onClick={leavePage} key={BtnKeys.LEAVE}>{BtnTitles.LEAVE_PAGE}</Button>
       ]}
     >
       <p>You are leaving this page without saving the last changes.</p>

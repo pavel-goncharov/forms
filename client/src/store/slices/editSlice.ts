@@ -69,7 +69,7 @@ const editSlice = createSlice({
     setIsErrorEdit(state, action: PayloadAction<boolean>) {
       state.isErrorEdit = action.payload;
     },
-    setFalseToIsModalLeftWillBeShown(state) {
+    setFalseToIsModalLeftEditWillBeShown(state) {
       state.isModalLeftWillBeShown = false;
     }
   }
