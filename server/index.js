@@ -25,6 +25,9 @@ app.use(cors({
 }));
 
 app.use(API, router);
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/../client/build/index.html'))
+});
 app.use(errorHandler);
 
 async function start() {

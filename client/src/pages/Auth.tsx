@@ -169,12 +169,20 @@ const Auth: FC = () => {
     setHelpPassword(ValidateHelpers.CHECK_PASSWORD);
   }
 
+  // Remove it
+  function setMockUser(): void {
+    setEmail('timofeygolyntov@gmail.com');
+    setPassword('timofey12345');
+  }
+
   const isLogin: boolean = (location.pathname === RoutePaths.LOGIN);
   const authPage: IAuthMode = isLogin ? loginMode : signUpMode;
 
   return (
     <div className={classes.auth}>
       <Form onFinish={signIn} className={classes.form} layout={VERTICAL} size={LARGE}>
+        {/* Remove it */}
+        {isLogin && <Button type="primary" danger onClick={setMockUser} style={{width: '100%'}}>SET MOCK USER (TEST BTN)</Button>}
         <h2 className={classes.title}>{authPage.title}</h2>
         {errorTitle && <div className={classes.errorTitle}>{errorTitle}</div>}
         {!isLogin &&

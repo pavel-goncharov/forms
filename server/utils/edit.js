@@ -79,7 +79,6 @@ export async function saveQuestions(questions, dbQuestions, formId) {
       const newQuestion = await Question.create({title: question.title, formId});
       restQuestionId = newQuestion.id; 
     }
-    // answers
     const answers = question.answers;
     const dbAnswers = await Answer.findAll({where: {questionId: restQuestionId}});
     await saveAnswers(answers, dbAnswers, restQuestionId);
