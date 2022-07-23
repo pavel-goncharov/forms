@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.130ea1ea.css",
+    "main.js": "/static/js/main.ebe45bb5.js",
+    "static/media/sequelize.png": "/static/media/sequelize.8c389dc392d00f76753b.png",
+    "static/media/postgres.png": "/static/media/postgres.87519c30dc5262377933.png",
+    "static/media/ant-design.png": "/static/media/ant-design.78c9b8df3d7163d9bd54.png",
+    "static/media/node-js.png": "/static/media/node-js.e328955d6bbbf3ebc72b.png",
+    "static/media/jwt.png": "/static/media/jwt.99b3973c141e145d68bf.png",
+    "static/media/react.png": "/static/media/react.44319306359c7112276d.png",
+    "static/media/createForm.png": "/static/media/createForm.97aaeca7cf11d19c4310.png",
+    "static/media/express.png": "/static/media/express.39a0f4c3d981885c64f8.png",
+    "static/media/less.png": "/static/media/less.bdca999cb35d8d9f2e5e.png",
+    "static/media/redux.png": "/static/media/redux.b3b939c66aecf7d53967.png",
+    "static/media/passForm.png": "/static/media/passForm.022471f91d8e1aa9d2aa.png",
+    "index.html": "/index.html",
+    "main.130ea1ea.css.map": "/static/css/main.130ea1ea.css.map",
+    "main.ebe45bb5.js.map": "/static/js/main.ebe45bb5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.130ea1ea.css",
+    "static/js/main.ebe45bb5.js"
+  ]
+}

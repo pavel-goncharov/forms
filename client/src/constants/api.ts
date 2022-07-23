@@ -1,3 +1,4 @@
+export const API_URL = 'http://localhost:5000/api';
 export const credentials = 'include';
 export const apiReducerPath = 'appApi';
 

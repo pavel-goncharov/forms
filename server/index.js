@@ -1,4 +1,6 @@
 import express from 'express';
+import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
 import 'dotenv/config';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -8,9 +10,13 @@ import router from './routes/index.js';
 import errorHandler from './middleware/ErrorHandlingMiddleware.js';
 import {API} from './constants/api.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const PORT = process.env.PORT || 5000;
 
 const app = express();
+app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
